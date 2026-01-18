@@ -8,6 +8,9 @@ public class Backrooms : NetworkBehaviour
     public GameObject wallPrefab;     // Assign in inspector, wall prefab (for exterior walls)
     public GameObject exitPrefab;      // Assign in inspector, exit prefab
     public BackroomsGenerator generator; // Assign in inspector, the maze generator component
+    public AnimationCurve lightTwinkleLightCurve;
+
+    [HideInInspector] public CellBehaviour[,] Cells;
 
     void Awake()
     {
@@ -23,7 +26,7 @@ public class Backrooms : NetworkBehaviour
         var size = Random.Range(LocalConfig.Singleton.MinBackroomsSize.Value, LocalConfig.Singleton.MaxBackroomsSize.Value + 1);
         generator.width = size;
         generator.height = size;
-        GenerateBackrooms();
+        GenerateBackroomsServerRpc();
     }
 
     [ServerRpc(RequireOwnership = true)]
@@ -34,12 +37,14 @@ public class Backrooms : NetworkBehaviour
 
         generator.Generate();
 
+        // Instatiate cells for all clients, should make a rectangle.
         for(int x = 0; x < generator.width; x++)
         {
             for(int y = 0; y < generator.height; y++)
             {
+                const float CELL_SIZE = 4f; // may be modified depending on how big I make the cells in blender
                 var cell =generator.cells[x, y];
-                var cellgo = Instantiate(baseCellPrefab, new Vector3(0, -1000, 0), Quaternion.identity);
+                var cellgo = Instantiate(baseCellPrefab, new Vector3(x * CELL_SIZE, -1000, y * CELL_SIZE), Quaternion.identity);
                 cellgo.GetComponent<NetworkObject>().Spawn(true);
                 var cellmono = cellgo.GetComponent<CellBehaviour>();
 
@@ -85,16 +90,42 @@ public class Backrooms : NetworkBehaviour
                         cellmono.representation.Walls |= WallFlags.East;
                     }
                 }
-                cellmono.Initialize(cell);
+
+                const int LIGHT_GO_CHANCE_PERCENT = 30;
+                const int LIGHT_ON_CHANCE_PERCENT = 60;
+                var putLightFlag = Random.RandomRangeInt(0, 101) < LIGHT_GO_CHANCE_PERCENT;
+                if(putLightFlag)
+                {
+                    var lightOnFlag = Random.RandomRangeInt(0, 101) < LIGHT_ON_CHANCE_PERCENT;
+                    cellmono.Initialize(cell, true, lightOnFlag);
+                }
+                else
+                {
+                    cellmono.Initialize(cell, false, false);
+                }
             }
         }
     }
 
-    public override void OnDestroy() {
+    public override void OnDestroy()
     {
         if(Instance == this)
         {
             Instance = null;
+        }
+    }
+
+    private void TwinkleRandomLights()
+    {
+        foreach(var cell in Cells)
+        {
+            if(!cell.hasLightSource)
+                continue;
+            var twinkleChance = Random.Range(0f, 100f);
+            if(twinkleChance < 10f)
+            {
+                cell.TwinkleLight(lightTwinkleLightCurve, Random.Range(1f, lightTwinkleLightCurve.keys[^1].time));
+            }
         }
     }
 }

@@ -17,6 +17,7 @@ public class LocalConfig
     public readonly ConfigEntry<BackroomsGenerator.MazeAlgorithm> GenerationAlgorithm;
     public readonly ConfigEntry<int> MinBackroomsSize;
     public readonly ConfigEntry<int> MaxBackroomsSize;
+    public readonly ConfigEntry<int> MaxFakeExitCount;
 
     public LocalConfig(ConfigFile cfg)
     {
@@ -80,6 +81,12 @@ public class LocalConfig
             "Maximum Backrooms Size",
             30,
             "The maximum size in cells (width and length) of generated Backrooms levels."
+        );
+        MaxFakeExitCount = cfg.Bind(
+            "Generation",
+            "Maximum Fake Exits Count",
+            2,
+            "The maximum number of fake exits that will appear in the Backrooms. They do not kill, just TP to somewhere else in the backrooms."
         );
     }
 }

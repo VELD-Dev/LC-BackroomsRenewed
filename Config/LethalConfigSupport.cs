@@ -121,6 +121,18 @@ internal static class LethalConfigSupport
                 Max = 50,
                 RequiresRestart = false,
             });
+        var genFakeExitMax = new IntInputFieldConfigItem(
+            config.MaxFakeExitCount,
+            new IntInputFieldOptions
+            {
+                Name = "Maximum Fake Exits Count",
+                Description = "The maximum number of fake exits that will appear in the Backrooms. They do not kill, just TP to somewhere else in the backrooms.",
+                Section = "Generation",
+                RequiresRestart = false,
+                Min = 0,
+                Max = 10,
+            }
+        );
 
         LethalConfigManager.AddConfigItem(tpOnDeath);
         LethalConfigManager.AddConfigItem(tpOddsOnDeath);
@@ -132,5 +144,6 @@ internal static class LethalConfigSupport
         LethalConfigManager.AddConfigItem(genAlgorithm);
         LethalConfigManager.AddConfigItem(genMinSize);
         LethalConfigManager.AddConfigItem(genMaxSize);
+        LethalConfigManager.AddConfigItem(genFakeExitMax);
     }
 }
