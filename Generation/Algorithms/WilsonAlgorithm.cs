@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-
 namespace VELDDev.BackroomsRenewed.Generation.Algorithms;
 
 public class WilsonAlgorithm : IMazeAlgorithm

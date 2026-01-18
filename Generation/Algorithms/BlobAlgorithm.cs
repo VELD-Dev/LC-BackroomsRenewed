@@ -1,9 +1,4 @@
-using System;
-
 namespace VELDDev.BackroomsRenewed.Generation.Algorithms;
-
-using System.Collections.Generic;
-using UnityEngine;
 
 public class BlobAlgorithm : IMazeAlgorithm
 {

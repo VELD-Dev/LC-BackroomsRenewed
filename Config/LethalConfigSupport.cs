@@ -1,0 +1,136 @@
+using System.Runtime.CompilerServices;
+using LethalConfig;
+using LethalConfig.ConfigItems;
+using LethalConfig.ConfigItems.Options;
+
+namespace VELDDev.BackroomsRenewed.Config;
+
+internal static class LethalConfigSupport
+{
+    private static bool? lethalConfigLoaded;
+    public static bool LethalConfigLoaded
+    {
+        get
+        {
+            lethalConfigLoaded ??= BepInEx.Bootstrap.Chainloader.PluginInfos.ContainsKey("ainavt.lc.lethalconfig");
+
+            return (bool)lethalConfigLoaded;
+        }
+    }
+
+    [MethodImpl(MethodImplOptions.NoInlining | MethodImplOptions.NoOptimization)]
+    internal static void RegisterLethalConfig(LocalConfig config)
+    {
+        LethalConfigManager.SetModDescription(LocalConfig.ModDescription);
+
+        var tpOnDeath = new BoolCheckBoxConfigItem(
+            config.TeleportOnDeath,
+            new BoolCheckBoxOptions
+            {
+                Name = "Teleport on Death",
+                Description = "Allows teleportation on death of player. See also 'Teleportation Odds on Death'.",
+                Section = "Teleportation",
+                RequiresRestart = false,
+            });
+        var tpOnClippng = new BoolCheckBoxConfigItem(
+            config.TeleportOnClipping,
+            new BoolCheckBoxOptions
+            {
+                Name = "Teleport on Clipping",
+                Description = "Allows teleportation on clipping through walls. See also 'Teleportation Odds on Clipping'.",
+                Section = "Teleportation",
+                RequiresRestart = false,
+            });
+        var tpOnDamage = new BoolCheckBoxConfigItem(
+            config.TeleportOnDamage,
+            new BoolCheckBoxOptions
+            {
+                Name = "Teleport on Damage",
+                Description = "Allows teleportation on taking damage. See also 'Teleportation Odds on Damage'.",
+                Section = "Teleportation",
+                RequiresRestart = false,
+            });
+
+
+        var tpOddsOnDeath = new FloatSliderConfigItem(
+            config.TeleportationOddsOnDeath,
+            new FloatSliderOptions
+            {
+                Name = "Teleportation Odds on Death",
+                Description = "The percentage chance of teleportation occurring on death.",
+                Section = "Teleportation",
+                Min = 0f,
+                Max = 100f,
+                RequiresRestart = false,
+                CanModifyCallback = () => config.TeleportOnDeath.Value
+            });
+        var tpOddsOnClipping = new FloatSliderConfigItem(
+            config.TeleportationOddsOnClipping,
+            new FloatSliderOptions
+            {
+                Name = "Teleportation Odds on Clipping",
+                Description = "The percentage chance of teleportation occurring on clipping through walls or ground.",
+                Section = "Teleportation",
+                Min = 0f,
+                Max = 100f,
+                RequiresRestart = false,
+                CanModifyCallback = () => config.TeleportOnClipping.Value
+            });
+        var tpOddsOnDamage = new FloatSliderConfigItem(
+            config.TeleportationOddsOnDamage,
+            new FloatSliderOptions
+            {
+                Name = "Teleportation Odds on Damage",
+                Description = "The percentage chance of teleportation occurring on taking damage.",
+                Section = "Teleportation",
+                Min = 0f,
+                Max = 100f,
+                RequiresRestart = false,
+                CanModifyCallback = () => config.TeleportOnDamage.Value
+            });
+
+        var genAlgorithm = new EnumDropDownConfigItem<BackroomsGenerator.MazeAlgorithm>(
+            config.GenerationAlgorithm,
+            new EnumDropDownOptions
+            {
+                Name = "Backrooms Generation Algorithm",
+                Description = "The maze generation algorithm used for Backrooms levels. (Blob is recommended for optimal aesthetics)",
+                Section = "Generation",
+                RequiresRestart = true,
+            });
+
+        var genMinSize = new IntSliderConfigItem(
+            config.MinBackroomsSize,
+            new IntSliderOptions
+            {
+                Name = "Minimum Backrooms Size",
+                Description = "The minimum size in cells (width and height) of generated Backrooms levels.",
+                Section = "Generation",
+                Min = 10,
+                Max = 50,
+                RequiresRestart = false,
+            });
+        var genMaxSize = new IntSliderConfigItem(
+            config.MaxBackroomsSize,
+            new IntSliderOptions
+            {
+                Name = "Maximum Backrooms Size",
+                Description = "The maximum size in cells (width and height) of generated Backrooms levels.",
+                Section = "Generation",
+                Min = 10,
+                Max = 50,
+                RequiresRestart = false,
+            });
+
+        LethalConfigManager.AddConfigItem(tpOnDeath);
+        LethalConfigManager.AddConfigItem(tpOddsOnDeath);
+        LethalConfigManager.AddConfigItem(tpOnClippng);
+        LethalConfigManager.AddConfigItem(tpOddsOnClipping);
+        LethalConfigManager.AddConfigItem(tpOnDamage);
+        LethalConfigManager.AddConfigItem(tpOddsOnDamage);
+
+        LethalConfigManager.AddConfigItem(genAlgorithm);
+        LethalConfigManager.AddConfigItem(genMinSize);
+        LethalConfigManager.AddConfigItem(genMaxSize);
+    }
+}

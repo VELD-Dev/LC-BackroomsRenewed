@@ -2,14 +2,14 @@ using VELDDev.BackroomsRenewed.Generation.Algorithms;
 
 namespace VELDDev.BackroomsRenewed.Generation;
 
-public class MazeGenerator : MonoBehaviour
+public class BackroomsGenerator : MonoBehaviour
 {
     public int width = 20;
     public int height = 20;
-    public MazeAlgorithm algorithm = MazeAlgorithm.Kruskal;
+    public MazeAlgorithm algorithm = LocalConfig.Singleton.GenerationAlgorithm.Value;
     public Vector2Int exitPosition;
     
-    private Cell[,] maze = new Cell[0, 0];
+    public Cell[,] cells = new Cell[0, 0];
     private IMazeAlgorithm currentAlgorithm;
     
     public enum MazeAlgorithm
@@ -37,18 +37,18 @@ public class MazeGenerator : MonoBehaviour
             _ => throw new System.NotImplementedException()
         };
         
-        currentAlgorithm.Generate(maze, width, height);
+        currentAlgorithm.Generate(cells, width, height);
         PlaceExit();
     }
     
     private void InitializeMaze()
     {
-        maze = new Cell[width, height];
+        cells = new Cell[width, height];
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
             {
-                maze[x, y] = new Cell(x, y);
+                cells[x, y] = new Cell(x, y);
             }
         }
     }
@@ -60,19 +60,19 @@ public class MazeGenerator : MonoBehaviour
         {
             case 0:
                 exitPosition = new Vector2Int(Random.Range(0, width), height - 1);
-                maze[exitPosition.x, exitPosition.y].Walls &= ~WallFlags.North;
+                cells[exitPosition.x, exitPosition.y].Walls &= ~WallFlags.North;
                 break;
             case 1:
                 exitPosition = new Vector2Int(width - 1, Random.Range(0, height));
-                maze[exitPosition.x, exitPosition.y].Walls &= ~WallFlags.East;
+                cells[exitPosition.x, exitPosition.y].Walls &= ~WallFlags.East;
                 break;
             case 2:
                 exitPosition = new Vector2Int(Random.Range(0, width), 0);
-                maze[exitPosition.x, exitPosition.y].Walls &= ~WallFlags.South;
+                cells[exitPosition.x, exitPosition.y].Walls &= ~WallFlags.South;
                 break;
             case 3:
                 exitPosition = new Vector2Int(0, Random.Range(0, height));
-                maze[exitPosition.x, exitPosition.y].Walls &= ~WallFlags.West;
+                cells[exitPosition.x, exitPosition.y].Walls &= ~WallFlags.West;
                 break;
         }
     }

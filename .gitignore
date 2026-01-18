@@ -6,6 +6,9 @@
 # dotenv files
 .env
 
+# Assembly dependency files
+deps/
+
 # User-specific files
 *.rsuser
 *.suo
