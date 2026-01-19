@@ -5,6 +5,8 @@
     <RootNamespace>VELDDev.BackroomsRenewed</RootNamespace>
     <LangVersion>preview</LangVersion>
     <Nullable>enable</Nullable>
+
+    <DefaultItemExcludes>$(DefaultItemExcludes);deps/**;UnityProject/**</DefaultItemExcludes>
   </PropertyGroup>
 
   <ItemGroup>
