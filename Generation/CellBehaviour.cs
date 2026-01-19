@@ -51,7 +51,7 @@ public class CellBehaviour : NetworkBehaviour {
         StartCoroutine(TwinkleCoroutine(intensityCurve, duration));
     }
 
-    private System.Collections.IEnumerator TwinkleCoroutine(AnimationCurve intensityCurve, float duration)
+    private IEnumerator TwinkleCoroutine(AnimationCurve intensityCurve, float duration)
     {
         float elapsed = 0f;
         while (elapsed < duration)

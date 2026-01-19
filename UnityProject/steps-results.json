@@ -1,39 +1,39 @@
 {
-  "StartTime": "2026-01-18T21:35:31.516277+01:00",
+  "StartTime": "2026-01-19T19:54:17.468744+01:00",
   "EndTime": "0001-01-01T00:00:00",
-  "ElapsedSeconds": 648.71039099999985,
+  "ElapsedSeconds": 5164.431976,
   "Results": [
     {
       "fullName": "Nomnom.UnityProjectPatcher.Editor.Steps.GenerateDefaultProjectStructureStep",
-      "elapsedSeconds": 0.050525999999999995
+      "elapsedSeconds": 0.053196999999999994
     },
     {
       "fullName": "Nomnom.UnityProjectPatcher.Editor.Steps.ImportTextMeshProStep",
-      "elapsedSeconds": 5.646971
+      "elapsedSeconds": 5.876671
     },
     {
       "fullName": "Nomnom.UnityProjectPatcher.Editor.Steps.GenerateGitIgnoreStep",
-      "elapsedSeconds": 0.029487
+      "elapsedSeconds": 0.028367999999999997
     },
     {
       "fullName": "Nomnom.UnityProjectPatcher.Editor.Steps.GenerateReadmeStep",
-      "elapsedSeconds": 0.025611
+      "elapsedSeconds": 4700.091646
     },
     {
       "fullName": "Nomnom.UnityProjectPatcher.Editor.Steps.PackagesInstallerStep",
-      "elapsedSeconds": 205.155947
+      "elapsedSeconds": 10.716173
     },
     {
       "fullName": "Nomnom.UnityProjectPatcher.Editor.Steps.EnableNewInputSystemStep",
-      "elapsedSeconds": 285.42019999999997
+      "elapsedSeconds": 18.640936999999997
     },
     {
       "fullName": "Nomnom.UnityProjectPatcher.Editor.Steps.CacheProjectCatalogueStep",
-      "elapsedSeconds": 29.666311
+      "elapsedSeconds": 40.492022999999996
     },
     {
       "fullName": "Nomnom.UnityProjectPatcher.Editor.Steps.AssetRipperStep",
-      "elapsedSeconds": 123.71533799999999
+      "elapsedSeconds": 389.532961
     }
   ]
 }

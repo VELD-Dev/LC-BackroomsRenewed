@@ -8,7 +8,7 @@
       "hash": "0be2722f2203479c20f65964b4e3dc46ab813563"
     },
     "com.nomnom.unity-project-patcher": {
-      "version": "https://github.com/nomnomab/unity-project-patcher.git",
+      "version": "https://github.com/Zaggy1024/unity-project-patcher.git",
       "depth": 0,
       "source": "git",
       "dependencies": {

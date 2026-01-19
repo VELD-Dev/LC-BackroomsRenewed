@@ -862,6 +862,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2891210370892216933}
   - component: {fileID: 514104637535726598}
+  - component: {fileID: 1584605021063995064}
   m_Layer: 0
   m_Name: BackroomCellPrefab
   m_TagString: Untagged
@@ -911,3 +912,23 @@ MonoBehaviour:
   SpawnWithObservers: 1
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
+--- !u!114 &1584605021063995064
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9179525186742188660}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1619084295, guid: a0538a047c7e0051684f88ced229b2d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  NorthWall: {fileID: 3502590491447789785}
+  EastWall: {fileID: 6730631439835642695}
+  SouthWall: {fileID: 8229287230617109443}
+  WestWall: {fileID: 8272517353241595534}
+  LightObject: {fileID: 4693946014766776661}
+  cellLightSource: {fileID: 6043281878012624286}
+  hasLightSource: 0
+  defaultLightState: 0

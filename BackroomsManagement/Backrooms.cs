@@ -5,7 +5,7 @@ public class Backrooms : NetworkBehaviour
     public static Backrooms Instance;
 
     public GameObject baseCellPrefab;  // Assign in inspector, the base cell prefab with cellBehaviour
-    public GameObject wallPrefab;     // Assign in inspector, wall prefab (for exterior walls)
+    public List<GameObject> cellsVariants; // Assign in inspector, different cell variants to randomize appearance
     public GameObject exitPrefab;      // Assign in inspector, exit prefab
     public BackroomsGenerator generator; // Assign in inspector, the maze generator component
     public AnimationCurve lightTwinkleLightCurve;
