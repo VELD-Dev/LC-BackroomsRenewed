@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1241879389, guid: f46d54e507601254ca64f43152c708de, type: 3}
+  m_Name: DefaultCellVariant
+  m_EditorClassIdentifier: 
+  variantPrefab: {fileID: 9179525186742188660, guid: 5c5fc42d0a9462f799a887e2248749fc,
+    type: 3}
+  weight: 100
+  maxAmount: -1
+  mustSpawnAtLeastOnce: 0

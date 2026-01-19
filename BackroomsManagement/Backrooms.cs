@@ -7,8 +7,11 @@ public class Backrooms : NetworkBehaviour
     public List<CellVariantInfo> cellsVariants; // Assign in inspector, different cell variants to randomize appearance
     public GameObject exitPrefab;               // Assign in inspector, exit prefab
     public Transform CellsHolder;               // Assign in inspector, parent transform for all cells
+    public GameObject BackroomsLightCover;      // Assign in inspector, light cover prefab to place above the backrooms to prevent light from leaking
     public BackroomsGenerator generator;        // Assign in inspector, the maze generator component
     public AnimationCurve lightTwinkleLightCurve;
+
+    [HideInInspector]
     public NetworkVariable<bool> IsGenerated = new(false);
 
     [HideInInspector] public CellBehaviour[,] Cells;
@@ -73,13 +76,15 @@ public class Backrooms : NetworkBehaviour
 
         generator.Generate();
         Cells = new CellBehaviour[generator.width, generator.height];
+        const float CELL_SIZE = 8f; // may be modified depending on how big I make the cells in blender
+
+        BackroomsLightCover.transform.localScale = new Vector3(generator.width * CELL_SIZE, 1f, generator.height * CELL_SIZE);
 
         // Instatiate cells for all clients, should make a rectangle.
         for(int x = 0; x < generator.width; x++)
         {
             for(int y = 0; y < generator.height; y++)
             {
-                const float CELL_SIZE = 8f; // may be modified depending on how big I make the cells in blender
                 var cell = generator.cells[x, y];
                 var selectedVariant = GetWeightedRandomVariant();
                 var cellgo = Instantiate(selectedVariant.variantPrefab, new Vector3(x * CELL_SIZE, -1000, y * CELL_SIZE), Quaternion.identity);
