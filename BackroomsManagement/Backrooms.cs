@@ -4,13 +4,15 @@ public class Backrooms : NetworkBehaviour
 {
     public static Backrooms Instance;
 
-    public GameObject baseCellPrefab;  // Assign in inspector, the base cell prefab with cellBehaviour
-    public List<GameObject> cellsVariants; // Assign in inspector, different cell variants to randomize appearance
+    public List<CellVariantInfo> cellsVariants; // Assign in inspector, different cell variants to randomize appearance
     public GameObject exitPrefab;      // Assign in inspector, exit prefab
     public BackroomsGenerator generator; // Assign in inspector, the maze generator component
     public AnimationCurve lightTwinkleLightCurve;
 
     [HideInInspector] public CellBehaviour[,] Cells;
+
+    private readonly Dictionary<CellVariantInfo, int> _variantUsageCount = [];
+    private readonly HashSet<CellVariantInfo> _requiredVariantsNotYetSpawned = [];
 
     void Awake()
     {
@@ -35,7 +37,20 @@ public class Backrooms : NetworkBehaviour
         if(!NetworkManager.Singleton.IsHost)
             return;
 
+        // Reset usage counter and required variants tracking for new generation
+        _variantUsageCount.Clear();
+        _requiredVariantsNotYetSpawned.Clear();
+        foreach(var variant in cellsVariants)
+        {
+            _variantUsageCount[variant] = 0;
+            if(variant.mustSpawnAtLeastOnce)
+            {
+                _requiredVariantsNotYetSpawned.Add(variant);
+            }
+        }
+
         generator.Generate();
+        Cells = new CellBehaviour[generator.width, generator.height];
 
         // Instatiate cells for all clients, should make a rectangle.
         for(int x = 0; x < generator.width; x++)
@@ -43,8 +58,9 @@ public class Backrooms : NetworkBehaviour
             for(int y = 0; y < generator.height; y++)
             {
                 const float CELL_SIZE = 4f; // may be modified depending on how big I make the cells in blender
-                var cell =generator.cells[x, y];
-                var cellgo = Instantiate(baseCellPrefab, new Vector3(x * CELL_SIZE, -1000, y * CELL_SIZE), Quaternion.identity);
+                var cell = generator.cells[x, y];
+                var selectedVariant = GetWeightedRandomVariant();
+                var cellgo = Instantiate(selectedVariant.variantPrefab, new Vector3(x * CELL_SIZE, -1000, y * CELL_SIZE), Quaternion.identity);
                 cellgo.GetComponent<NetworkObject>().Spawn(true);
                 var cellmono = cellgo.GetComponent<CellBehaviour>();
 
@@ -53,41 +69,49 @@ public class Backrooms : NetworkBehaviour
                 {
                     if(x == 0)
                     {
-                        cellmono.representation.Walls |= WallFlags.West | WallFlags.South;
+                        cell.Walls |= WallFlags.West | WallFlags.South;
                     }
                     else if(x == generator.width - 1)
                     {
-                        cellmono.representation.Walls |= WallFlags.East | WallFlags.South;
+                        cell.Walls |= WallFlags.East | WallFlags.South;
                     }
                     else
                     {
-                        cellmono.representation.Walls |= WallFlags.South;
+                        cell.Walls |= WallFlags.South;
                     }
                 }
                 else if(y == generator.height - 1)
                 {
                     if(x == 0)
                     {
-                        cellmono.representation.Walls |= WallFlags.West | WallFlags.North;
+                        cell.Walls |= WallFlags.West | WallFlags.North;
                     }
                     else if(x == generator.width - 1)
                     {
-                        cellmono.representation.Walls |= WallFlags.East | WallFlags.North;
+                        cell.Walls |= WallFlags.East | WallFlags.North;
                     }
                     else
                     {
-                        cellmono.representation.Walls |= WallFlags.North;
+                        cell.Walls |= WallFlags.North;
                     }
                 }
                 else
                 {
                     if(x == 0)
                     {
-                        cellmono.representation.Walls |= WallFlags.West;
+                        cell.Walls |= WallFlags.West;
                     }
                     else if(x == generator.width - 1)
                     {
-                        cellmono.representation.Walls |= WallFlags.East;
+                        cell.Walls |= WallFlags.East;
+                    }
+                    else
+                    {
+                        // This is my ingenious *cough* way to remove duplicate walls
+                        // I remove these walls as the previous cells already have it !
+                        // The next cell doesn't need to remove its walls !
+                        // I call this easy optimization.
+                        cell.Walls &= ~(WallFlags.South | WallFlags.West);
                     }
                 }
 
@@ -103,6 +127,7 @@ public class Backrooms : NetworkBehaviour
                 {
                     cellmono.Initialize(cell, false, false);
                 }
+                Cells[x, y] = cellmono;
             }
         }
     }
@@ -127,5 +152,62 @@ public class Backrooms : NetworkBehaviour
                 cell.TwinkleLight(lightTwinkleLightCurve, Random.Range(1f, lightTwinkleLightCurve.keys[^1].time));
             }
         }
+    }
+
+    private CellVariantInfo GetWeightedRandomVariant()
+    {
+        // If there are required variants that haven't spawned yet, prioritize them
+        // It's not optimal as they may all spawn in a corner of the backrooms but
+        // It will do the trick for now.
+        if(_requiredVariantsNotYetSpawned.Count > 0)
+        {
+            // Get available required variants (respecting max amount)
+            var availableRequiredVariants = _requiredVariantsNotYetSpawned
+                .Where(v => v.maxAmount == -1 || _variantUsageCount[v] < v.maxAmount)
+                .ToList();
+
+            if(availableRequiredVariants.Count > 0)
+            {
+                var selectedVariant = SelectWeightedRandom(availableRequiredVariants);
+                _requiredVariantsNotYetSpawned.Remove(selectedVariant);
+                return selectedVariant;
+            }
+        }
+
+        // Normal weighted random selection for all available variants
+        var availableVariants = cellsVariants.Where(v =>
+            v.maxAmount == -1 || _variantUsageCount[v] < v.maxAmount
+        ).ToList();
+
+        // If no variants available (all maxed out), return the first variant as fallback
+        if(availableVariants.Count == 0)
+        {
+            return cellsVariants[0];
+        }
+
+        return SelectWeightedRandom(availableVariants);
+    }
+
+    private CellVariantInfo SelectWeightedRandom(List<CellVariantInfo> variants)
+    {
+        float totalWeight = variants.Sum(v => v.weight);
+        float randomValue = Random.Range(0f, totalWeight);
+
+        // Select variant based on cumulative weights
+        float cumulativeWeight = 0f;
+        foreach(var variant in variants)
+        {
+            cumulativeWeight += variant.weight;
+            if(randomValue <= cumulativeWeight)
+            {
+                _variantUsageCount[variant]++;
+                return variant;
+            }
+        }
+
+        // Fallback (should rarely happen)
+        var selected = variants[^1];
+        _variantUsageCount[selected]++;
+        return selected;
     }
 }
