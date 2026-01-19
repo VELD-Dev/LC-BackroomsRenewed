@@ -5,14 +5,18 @@ public class Backrooms : NetworkBehaviour
     public static Backrooms Instance;
 
     public List<CellVariantInfo> cellsVariants; // Assign in inspector, different cell variants to randomize appearance
-    public GameObject exitPrefab;      // Assign in inspector, exit prefab
-    public BackroomsGenerator generator; // Assign in inspector, the maze generator component
+    public GameObject exitPrefab;               // Assign in inspector, exit prefab
+    public Transform CellsHolder;               // Assign in inspector, parent transform for all cells
+    public BackroomsGenerator generator;        // Assign in inspector, the maze generator component
     public AnimationCurve lightTwinkleLightCurve;
+    public NetworkVariable<bool> IsGenerated = new(false);
 
     [HideInInspector] public CellBehaviour[,] Cells;
 
     private readonly Dictionary<CellVariantInfo, int> _variantUsageCount = [];
     private readonly HashSet<CellVariantInfo> _requiredVariantsNotYetSpawned = [];
+    private float _timeSinceLastTwinkleCheck = 0f;
+    private float _nextTwinkleCheckTime = 0f;
 
     void Awake()
     {
@@ -29,6 +33,24 @@ public class Backrooms : NetworkBehaviour
         generator.width = size;
         generator.height = size;
         GenerateBackroomsServerRpc();
+    }
+
+    void Update()
+    {
+        if(NetworkManager.Singleton.IsHost && IsGenerated.Value)
+        {
+            if(_timeSinceLastTwinkleCheck < 5f)
+            {
+                _timeSinceLastTwinkleCheck += Time.deltaTime;
+                return;
+            }
+            else
+            {
+                TwinkleRandomLights();
+                _timeSinceLastTwinkleCheck = 0f;
+                _nextTwinkleCheckTime = Random.Range(3f, 15f);
+            }
+        }
     }
 
     [ServerRpc(RequireOwnership = true)]
@@ -57,7 +79,7 @@ public class Backrooms : NetworkBehaviour
         {
             for(int y = 0; y < generator.height; y++)
             {
-                const float CELL_SIZE = 4f; // may be modified depending on how big I make the cells in blender
+                const float CELL_SIZE = 8f; // may be modified depending on how big I make the cells in blender
                 var cell = generator.cells[x, y];
                 var selectedVariant = GetWeightedRandomVariant();
                 var cellgo = Instantiate(selectedVariant.variantPrefab, new Vector3(x * CELL_SIZE, -1000, y * CELL_SIZE), Quaternion.identity);
