@@ -5,6 +5,7 @@ public class BackroomThemeInfo : ScriptableObject
 {
     public string themeName;
     public List<CellVariantInfo> CellsVariants;
+    public AudioClip AmbienNoise;
     public List<AmbientMusicInfo> AmbientMusics;
     public float weight;
 }

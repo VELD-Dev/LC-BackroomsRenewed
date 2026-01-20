@@ -35,14 +35,18 @@ public class Backrooms : NetworkBehaviour
         var size = Random.Range(LocalConfig.Singleton.MinBackroomsSize.Value, LocalConfig.Singleton.MaxBackroomsSize.Value + 1);
         generator.width = size;
         generator.height = size;
-        GenerateBackroomsServerRpc();
+        if(IsServer)
+        {
+            GenerateBackrooms();
+        }
     }
 
-    void Update()
+    void FixedUpdate()
     {
-        if(NetworkManager.Singleton.IsHost && IsGenerated.Value)
+        // Not denesting in case I'm adding more stuff
+        if(NetworkManager.Singleton.IsHost && IsServer && IsGenerated.Value)
         {
-            if(_timeSinceLastTwinkleCheck < 5f)
+            if(_timeSinceLastTwinkleCheck < _nextTwinkleCheckTime)
             {
                 _timeSinceLastTwinkleCheck += Time.deltaTime;
                 return;
@@ -56,10 +60,9 @@ public class Backrooms : NetworkBehaviour
         }
     }
 
-    [ServerRpc(RequireOwnership = true)]
-    private void GenerateBackroomsServerRpc()
+    private void GenerateBackrooms()
     {
-        if(!NetworkManager.Singleton.IsHost)
+        if(!NetworkManager.Singleton.IsHost || !IsServer)
             return;
 
         // Reset usage counter and required variants tracking for new generation
@@ -148,11 +151,11 @@ public class Backrooms : NetworkBehaviour
                 if(putLightFlag)
                 {
                     var lightOnFlag = Random.RandomRangeInt(0, 101) < LIGHT_ON_CHANCE_PERCENT;
-                    cellmono.Initialize(cell, true, lightOnFlag);
+                    cellmono.InitializeClientRpc(cell, true, lightOnFlag);
                 }
                 else
                 {
-                    cellmono.Initialize(cell, false, false);
+                    cellmono.InitializeClientRpc(cell, false, false);
                 }
                 Cells[x, y] = cellmono;
             }
@@ -167,6 +170,7 @@ public class Backrooms : NetworkBehaviour
         }
     }
 
+    [ClientRpc]
     private void TwinkleRandomLights()
     {
         foreach(var cell in Cells)
