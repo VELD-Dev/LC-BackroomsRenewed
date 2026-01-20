@@ -23,6 +23,16 @@ internal static class LethalConfigSupport
     {
         LethalConfigManager.SetModDescription(LocalConfig.ModDescription);
 
+        var streamerMode = new BoolCheckBoxConfigItem(
+            config.StreamerMode,
+            new BoolCheckBoxOptions
+            {
+                Name = "Streamer Mode",
+                Description = "Enable streamer mode to disable copyrighted musics and replace with copyright-free alternatives.",
+                Section = "General",
+                RequiresRestart = false,
+            });
+
         var tpOnDeath = new BoolCheckBoxConfigItem(
             config.TeleportOnDeath,
             new BoolCheckBoxOptions
@@ -133,6 +143,8 @@ internal static class LethalConfigSupport
                 Max = 10,
             }
         );
+
+        LethalConfigManager.AddConfigItem(streamerMode);
 
         LethalConfigManager.AddConfigItem(tpOnDeath);
         LethalConfigManager.AddConfigItem(tpOddsOnDeath);

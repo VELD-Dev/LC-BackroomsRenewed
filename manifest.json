@@ -1,0 +1,10 @@
+{
+    "name": "Backrooms_Renewed",
+    "description": "ENT#R TH# BACKR##MS - A new Backroom mod, completely reimagined. New mechanics, more customization.",
+    "version_number": "0.1.0",
+    "dependencies": [
+        "BepInEx-BepInExPack-5.4.2304",
+        "AinaVT-LethalConfig-1.4.6"
+    ],
+    "website_url": "https://github.com/VELD-Dev/LC-BackroomsRenewed"
+}

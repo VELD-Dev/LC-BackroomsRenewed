@@ -8,6 +8,7 @@ public class LocalConfig
 
     internal const string ModDescription = "CR#T#CAL FA#LUR#: UNKN#WN #NTERV#ENTI#N D#T#CT#D -- #/1?.!1'(>>> JOIN ME JOIN ME JOIN ME JOIN ME JOIN ME JOIN ME JOIN ME JOIN ME JOIN ME JOIN ME JOIN ME JOIN ME";
 
+    public readonly ConfigEntry<bool> StreamerMode;
     public readonly ConfigEntry<bool> TeleportOnDeath;
     public readonly ConfigEntry<bool> TeleportOnClipping;
     public readonly ConfigEntry<bool> TeleportOnDamage;
@@ -22,6 +23,13 @@ public class LocalConfig
     public LocalConfig(ConfigFile cfg)
     {
         Singleton = this;
+
+        StreamerMode = cfg.Bind(
+            "General",
+            "Streamer Mode",
+            false,
+            "Enable streamer mode to disable copyrighted musics and replace with copyright-free alternatives."
+        );
 
         // FLAGS
         TeleportOnDeath = cfg.Bind(
