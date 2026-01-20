@@ -10,6 +10,9 @@ global using BepInEx;
 global using BepInEx.Logging;
 global using HarmonyLib;
 
+global using Dawn;
+global using Dawn.Utils;
+
 global using UnityEngine;
 global using Unity.Netcode;
 global using Random = UnityEngine.Random;

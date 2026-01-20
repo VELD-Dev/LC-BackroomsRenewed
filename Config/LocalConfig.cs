@@ -96,5 +96,10 @@ public class LocalConfig
             2,
             "The maximum number of fake exits that will appear in the Backrooms. They do not kill, just TP to somewhere else in the backrooms."
         );
+
+        if (LethalConfigSupport.LethalConfigLoaded)
+        {
+            LethalConfigSupport.RegisterLethalConfig(this);
+        }
     }
 }

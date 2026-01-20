@@ -39,7 +39,8 @@ public class Plugin : BaseUnityPlugin
         BackroomsPrefab = assetBundle.LoadAsset<GameObject>("Backrooms");
         var defaultCellDefaultVariant = assetBundle.LoadAsset<GameObject>("DefaultBackroomCellPrefab");
         
-        // TODO: REGISTRATION WITH LETHALLIB OR DAWNLIB
+        DawnLib.RegisterNetworkPrefab(BackroomsPrefab);
+        DawnLib.RegisterNetworkPrefab(defaultCellDefaultVariant);
     }
     
     private void NetcodePatch()

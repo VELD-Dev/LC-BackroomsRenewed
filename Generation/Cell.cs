@@ -10,14 +10,15 @@ public enum WallFlags : byte
     West  = 1 << 3   // -X
 }
 
+[Serializable]
 public class Cell
 {
     public WallFlags Walls;
-    public Vector2Int Position;
+    public Vector2Int position;
     
     public Cell(int x, int y)
     {
-        Position = new Vector2Int(x, y);
+        position = new Vector2Int(x, y);
         Walls = WallFlags.North | WallFlags.East | WallFlags.South | WallFlags.West;
     }
 }

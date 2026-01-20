@@ -33,10 +33,10 @@ public class CellBehaviour : NetworkBehaviour {
     
     private void UpdateWalls()
     {
-        NorthWall.SetActive((_representation.Walls & WallFlags.North) != 0);
-        EastWall.SetActive((_representation.Walls & WallFlags.East) != 0);
-        SouthWall.SetActive((_representation.Walls & WallFlags.South) != 0);
-        WestWall.SetActive((_representation.Walls & WallFlags.West) != 0);
+        NorthWall.SetActive((_representation.Value.Walls & WallFlags.North) != 0);
+        EastWall.SetActive((_representation.Value.Walls & WallFlags.East) != 0);
+        SouthWall.SetActive((_representation.Value.Walls & WallFlags.South) != 0);
+        WestWall.SetActive((_representation.Value.Walls & WallFlags.West) != 0);
     }
 
     private void SetLightState(bool state)
@@ -47,7 +47,7 @@ public class CellBehaviour : NetworkBehaviour {
 
     public void TwinkleLight(AnimationCurve intensityCurve, float duration)
     {
-        if (cellLightSource == null || !hasLightSource) return;
+        if (!cellLightSource || !hasLightSource) return;
         StartCoroutine(TwinkleCoroutine(intensityCurve, duration));
     }
 

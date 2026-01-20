@@ -1,14 +1,22 @@
+using GameNetcodeStuff;
+using Unity.AI.Navigation;
+using UnityEngine.AI;
+
 namespace VELDDev.BackroomsRenewed.BackroomsManagement;
 
 public class Backrooms : NetworkBehaviour
 {
+    const float CELL_SIZE = 8f; // may be modified depending on how big I make the cells in blender
+    
     public static Backrooms Instance;
 
-    public List<CellVariantInfo> cellsVariants; // Assign in inspector, different cell variants to randomize appearance
-    public GameObject exitPrefab;               // Assign in inspector, exit prefab
-    public Transform CellsHolder;               // Assign in inspector, parent transform for all cells
-    public GameObject BackroomsLightCover;      // Assign in inspector, light cover prefab to place above the backrooms to prevent light from leaking
-    public BackroomsGenerator generator;        // Assign in inspector, the maze generator component
+    public List<CellVariantInfo> cellsVariants;     // Assign in inspector, different cell variants to randomize appearance
+    public GameObject exitPrefab;                   // Assign in inspector, exit prefab
+    public Transform CellsHolder;                   // Assign in inspector, parent transform for all cells
+    public NavMeshModifierVolume BackroomsNavMesh;  // Assign in inspector
+    public NavMeshBuildSettings navmeshBS; // Assign in inspector
+    public GameObject BackroomsLightCover;          // Assign in inspector, light cover prefab to place above the backrooms to prevent light from leaking
+    public BackroomsGenerator generator;            // Assign in inspector, the maze generator component
     public AnimationCurve lightTwinkleLightCurve;
 
     [HideInInspector]
@@ -60,6 +68,17 @@ public class Backrooms : NetworkBehaviour
         }
     }
 
+    public void TeleportLocalPlayerSomewhereInBackrooms()
+    {
+        var localPlayer = GameNetworkManager.Instance.localPlayerController;
+        // TODO: Pick a random point on the navmesh in the Backrooms
+    }
+
+    private Vector3 PickRandomPosOnNavmesh()
+    {
+        Vector3 
+    }
+    
     private void GenerateBackrooms()
     {
         if(!NetworkManager.Singleton.IsHost || !IsServer)
@@ -79,9 +98,7 @@ public class Backrooms : NetworkBehaviour
 
         generator.Generate();
         Cells = new CellBehaviour[generator.width, generator.height];
-        const float CELL_SIZE = 8f; // may be modified depending on how big I make the cells in blender
 
-        BackroomsLightCover.transform.localScale = new Vector3(generator.width * CELL_SIZE, 1f, generator.height * CELL_SIZE);
 
         // Instatiate cells for all clients, should make a rectangle.
         for(int x = 0; x < generator.width; x++)
@@ -162,6 +179,21 @@ public class Backrooms : NetworkBehaviour
         }
     }
 
+    [ClientRpc]
+    private void SetupBackroomsClientRpc(int width, int length)
+    {
+        // Set anti-light leak cover location and size
+        var backroomsCenter = new Vector3((width * CELL_SIZE) / 2f, -995f, (length * CELL_SIZE) / 2f);
+        BackroomsLightCover.transform.position = backroomsCenter;
+        BackroomsLightCover.transform.localScale = new Vector3(width * CELL_SIZE, 1f, length * CELL_SIZE) * 1.1f;
+        
+        // Set navmesh location and size
+        BackroomsNavMesh.center = backroomsCenter + new Vector3(0, -5f, 0);
+        BackroomsNavMesh.size = new Vector3(width * CELL_SIZE, 1f, length * CELL_SIZE);
+        // NavMeshBuilder.BuildNavMeshData(navmeshBS)
+        // More research to be done for this smh
+    }
+    
     public override void OnDestroy()
     {
         if(Instance == this)
