@@ -1,6 +1,6 @@
 namespace VELDDev.BackroomsRenewed.Generation;
 
-[CreateAssetMenu(fileName = "CellVariantInfo", menuName = "CellVariantInfo", order = 0)]
+[CreateAssetMenu(fileName = "CellVariantInfo", menuName = "Cell Variant Info", order = 0)]
 public class CellVariantInfo : ScriptableObject
 {
     public GameObject variantPrefab;
