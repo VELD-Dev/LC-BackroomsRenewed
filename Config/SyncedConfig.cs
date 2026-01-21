@@ -19,6 +19,8 @@ public class SyncedConfig : Synchronizable<SyncedConfig>
     {
         InitInstance(this);
         config = cfg;
+        
+        // TODO: Add security to prevent Non-hosts from modifying the Instance when Synced. (Local function?)
         config.TeleportOnDeath.SettingChanged += (v, _) => TeleportOnDeath = (bool)v;
         config.TeleportOnClipping.SettingChanged += (v, _) => TeleportOnClipping = (bool)v;
         config.TeleportOnDamage.SettingChanged += (v, _) => TeleportOnDamage = (bool)v;
