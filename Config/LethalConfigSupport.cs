@@ -33,6 +33,7 @@ internal static class LethalConfigSupport
                 RequiresRestart = false,
             });
 
+        CanModifyResult NetworkAllowModifyCb() => (SyncedConfig.Synced && SyncedConfig.IsHost) || !SyncedConfig.Synced;
         var tpOnDeath = new BoolCheckBoxConfigItem(
             config.TeleportOnDeath,
             new BoolCheckBoxOptions
@@ -41,6 +42,7 @@ internal static class LethalConfigSupport
                 Description = "Allows teleportation on death of player. See also 'Teleportation Odds on Death'.",
                 Section = "Teleportation",
                 RequiresRestart = false,
+                CanModifyCallback = NetworkAllowModifyCb
             });
         var tpOnClippng = new BoolCheckBoxConfigItem(
             config.TeleportOnClipping,
@@ -50,6 +52,7 @@ internal static class LethalConfigSupport
                 Description = "Allows teleportation on clipping through walls. See also 'Teleportation Odds on Clipping'.",
                 Section = "Teleportation",
                 RequiresRestart = false,
+                CanModifyCallback = NetworkAllowModifyCb
             });
         var tpOnDamage = new BoolCheckBoxConfigItem(
             config.TeleportOnDamage,
@@ -59,6 +62,7 @@ internal static class LethalConfigSupport
                 Description = "Allows teleportation on taking damage. See also 'Teleportation Odds on Damage'.",
                 Section = "Teleportation",
                 RequiresRestart = false,
+                CanModifyCallback = NetworkAllowModifyCb
             });
 
 
@@ -72,7 +76,7 @@ internal static class LethalConfigSupport
                 Min = 0f,
                 Max = 100f,
                 RequiresRestart = false,
-                CanModifyCallback = () => config.TeleportOnDeath.Value
+                CanModifyCallback = () => config.TeleportOnDeath.Value && NetworkAllowModifyCb()
             });
         var tpOddsOnClipping = new FloatSliderConfigItem(
             config.TeleportationOddsOnClipping,
@@ -84,7 +88,7 @@ internal static class LethalConfigSupport
                 Min = 0f,
                 Max = 100f,
                 RequiresRestart = false,
-                CanModifyCallback = () => config.TeleportOnClipping.Value
+                CanModifyCallback = () => config.TeleportOnClipping.Value && NetworkAllowModifyCb()
             });
         var tpOddsOnDamage = new FloatSliderConfigItem(
             config.TeleportationOddsOnDamage,
@@ -96,9 +100,20 @@ internal static class LethalConfigSupport
                 Min = 0f,
                 Max = 100f,
                 RequiresRestart = false,
-                CanModifyCallback = () => config.TeleportOnDamage.Value
+                CanModifyCallback = () => config.TeleportOnDamage.Value && NetworkAllowModifyCb()
             });
 
+        var dropItemsOnTp = new BoolCheckBoxConfigItem(
+            config.DropHeldItemsOnTeleport,
+            new BoolCheckBoxOptions()
+            {
+                Name = "Drop Items on Teleport",
+                Description = "If enabled, will drop all the items when teleporting to the backrooms.",
+                Section = "Teleportation",
+                RequiresRestart = false,
+                CanModifyCallback = NetworkAllowModifyCb
+            });
+        
         var genAlgorithm = new EnumDropDownConfigItem<BackroomsGenerator.MazeAlgorithm>(
             config.GenerationAlgorithm,
             new EnumDropDownOptions
@@ -146,6 +161,7 @@ internal static class LethalConfigSupport
 
         LethalConfigManager.AddConfigItem(streamerMode);
 
+        LethalConfigManager.AddConfigItem(dropItemsOnTp);
         LethalConfigManager.AddConfigItem(tpOnDeath);
         LethalConfigManager.AddConfigItem(tpOddsOnDeath);
         LethalConfigManager.AddConfigItem(tpOnClippng);

@@ -13,8 +13,7 @@ public class Backrooms : NetworkBehaviour
     public List<CellVariantInfo> cellsVariants;     // Assign in inspector, different cell variants to randomize appearance
     public GameObject exitPrefab;                   // Assign in inspector, exit prefab
     public Transform CellsHolder;                   // Assign in inspector, parent transform for all cells
-    public NavMeshModifierVolume BackroomsNavMesh;  // Assign in inspector
-    public NavMeshBuildSettings navmeshBS; // Assign in inspector
+    public NavMeshSurface BackroomsNavMesh;          // Assign in inspector, the NavMeshSurface component to build the navmesh
     public GameObject BackroomsLightCover;          // Assign in inspector, light cover prefab to place above the backrooms to prevent light from leaking
     public BackroomsGenerator generator;            // Assign in inspector, the maze generator component
     public AnimationCurve lightTwinkleLightCurve;
@@ -71,12 +70,51 @@ public class Backrooms : NetworkBehaviour
     public void TeleportLocalPlayerSomewhereInBackrooms()
     {
         var localPlayer = GameNetworkManager.Instance.localPlayerController;
-        // TODO: Pick a random point on the navmesh in the Backrooms
+        var randomPos = PickRandomPosOnNavmesh();
+
+        if(randomPos.HasValue)
+        {
+            localPlayer.TeleportPlayer(randomPos.Value);
+        }
+        else
+        {
+            // Fallback: teleport to center of backrooms if NavMesh sampling fails
+            var fallbackPos = new Vector3(
+                (generator.width * CELL_SIZE) / 2f,
+                -1000f,
+                (generator.height * CELL_SIZE) / 2f
+            );
+            localPlayer.TeleportPlayer(fallbackPos);
+            Plugin.Instance.logger.LogWarning("Failed to find valid NavMesh position, using fallback center position");
+        }
     }
 
-    private Vector3 PickRandomPosOnNavmesh()
+    private Vector3? PickRandomPosOnNavmesh(int maxAttempts = 30)
     {
-        Vector3 
+        // Calculate the bounds of the backrooms
+        float minX = 0f;
+        float maxX = generator.width * CELL_SIZE;
+        float minZ = 0f;
+        float maxZ = generator.height * CELL_SIZE;
+        float y = -1000f; // Backrooms floor level
+
+        for(int i = 0; i < maxAttempts; i++)
+        {
+            // Pick a random point within the backrooms bounds
+            var randomPoint = new Vector3(
+                Random.Range(minX, maxX),
+                y,
+                Random.Range(minZ, maxZ)
+            );
+
+            // Try to find the nearest point on the NavMesh
+            if(NavMesh.SamplePosition(randomPoint, out NavMeshHit hit, CELL_SIZE, NavMesh.AllAreas))
+            {
+                return hit.position;
+            }
+        }
+
+        return null;
     }
     
     private void GenerateBackrooms()
@@ -177,6 +215,8 @@ public class Backrooms : NetworkBehaviour
                 Cells[x, y] = cellmono;
             }
         }
+        
+        SetupBackroomsClientRpc(generator.width, generator.height);
     }
 
     [ClientRpc]
@@ -190,7 +230,9 @@ public class Backrooms : NetworkBehaviour
         // Set navmesh location and size
         BackroomsNavMesh.center = backroomsCenter + new Vector3(0, -5f, 0);
         BackroomsNavMesh.size = new Vector3(width * CELL_SIZE, 1f, length * CELL_SIZE);
-        // NavMeshBuilder.BuildNavMeshData(navmeshBS)
+        // Navmesh may be baked in the future by making one navmesh surface for each cell
+        // and adding navmesh links between cells
+        BackroomsNavMesh.BuildNavMesh();
         // More research to be done for this smh
     }
     

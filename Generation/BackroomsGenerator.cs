@@ -9,7 +9,7 @@ public class BackroomsGenerator : MonoBehaviour
     public MazeAlgorithm algorithm = LocalConfig.Singleton.GenerationAlgorithm.Value;
     public Vector2Int exitPosition;
     
-    [HideInInspector] Cell[,] cells = new Cell[0, 0];
+    [HideInInspector] public Cell[,] cells = new Cell[0, 0];
     private IMazeAlgorithm currentAlgorithm;
     
     public enum MazeAlgorithm

@@ -4,7 +4,7 @@
 public class Plugin : BaseUnityPlugin
 {
     private Harmony harmony = new Harmony(PluginInfo.GUID);
-    private ManualLogSource logger;
+    internal ManualLogSource logger;
     public static Plugin Instance { get; private set; }
 
     internal AssetBundle assetBundle;

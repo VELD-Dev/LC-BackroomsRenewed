@@ -15,15 +15,19 @@ public class LocalConfig
     public readonly ConfigEntry<float> TeleportationOddsOnDeath; // Percentage
     public readonly ConfigEntry<float> TeleportationOddsOnClipping; // Percentage
     public readonly ConfigEntry<float> TeleportationOddsOnDamage; // Percentage
+    public readonly ConfigEntry<bool> DropHeldItemsOnTeleport;
     public readonly ConfigEntry<BackroomsGenerator.MazeAlgorithm> GenerationAlgorithm;
     public readonly ConfigEntry<int> MinBackroomsSize;
     public readonly ConfigEntry<int> MaxBackroomsSize;
     public readonly ConfigEntry<int> MaxFakeExitCount;
 
+    internal ConfigFile CfgFile;
+    
     public LocalConfig(ConfigFile cfg)
     {
         Singleton = this;
-
+        CfgFile = cfg;
+        
         StreamerMode = cfg.Bind(
             "General",
             "Streamer Mode",
@@ -69,6 +73,12 @@ public class LocalConfig
             "Teleportation Odds on Damage",
             1f,
             "The percentage chance of teleportation occurring on taking damage."
+        );
+        DropHeldItemsOnTeleport = cfg.Bind(
+            "Teleportation",
+            "Drop All Held Items On TP",
+            false,
+            "If enabled, will drop all items on the ground when TP in the Backrooms."
         );
 
         // GENERATION
