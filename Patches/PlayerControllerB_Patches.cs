@@ -25,7 +25,8 @@ public class PlayerControllerB_Patches
             randomizer = __instance.gameObject.AddComponent<FairRandomizer>();
         }
 
-        var sendToTheBackrooms = randomizer.CheckChance(FairRandomizer.DEATH_EVENT, SyncedConfig.Instance.TeleportationOddsOnDeath);
+        var sendToTheBackrooms = randomizer.CheckChance(FairRandomizer.DEATH_EVENT,
+            SyncedConfig.Instance.TeleportationOddsOnDeath / 100f);
         if (__instance.IsOwner && __instance.AllowPlayerDeath() && sendToTheBackrooms)
         {
             // PROXY DEATH HAHAHAHA
