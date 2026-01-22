@@ -22,18 +22,30 @@ internal static class LethalConfigSupport
     internal static void RegisterLethalConfig(LocalConfig config)
     {
         LethalConfigManager.SetModDescription(LocalConfig.ModDescription);
+        CanModifyResult NetworkAllowModifyCb() => (SyncedConfig.Synced && SyncedConfig.IsHost && NetworkManager.Singleton.IsServer) || !SyncedConfig.Synced;
 
         var streamerMode = new BoolCheckBoxConfigItem(
             config.StreamerMode,
             new BoolCheckBoxOptions
             {
                 Name = "Streamer Mode",
-                Description = "Enable streamer mode to disable copyrighted musics and replace with copyright-free alternatives.",
+                Description =
+                    "Enable streamer mode to disable copyrighted musics and replace with copyright-free alternatives.",
                 Section = "General",
                 RequiresRestart = false,
             });
-
-        CanModifyResult NetworkAllowModifyCb() => (SyncedConfig.Synced && SyncedConfig.IsHost) || !SyncedConfig.Synced;
+        var fairRandomizer = new BoolCheckBoxConfigItem(
+            config.UseFairRandomizer,
+            new BoolCheckBoxOptions 
+            {
+                Name = "Use Fair Randomization",
+                Description = "Whether to use fair randomization (a.k.a. Pity System) or normal randomization for random events (e.g. TP)",
+                Section = "General",
+                RequiresRestart = false,
+                CanModifyCallback = NetworkAllowModifyCb
+            });
+        
+        
         var tpOnDeath = new BoolCheckBoxConfigItem(
             config.TeleportOnDeath,
             new BoolCheckBoxOptions
@@ -44,7 +56,7 @@ internal static class LethalConfigSupport
                 RequiresRestart = false,
                 CanModifyCallback = NetworkAllowModifyCb
             });
-        var tpOnClippng = new BoolCheckBoxConfigItem(
+        var tpOnClipping = new BoolCheckBoxConfigItem(
             config.TeleportOnClipping,
             new BoolCheckBoxOptions
             {
@@ -160,11 +172,12 @@ internal static class LethalConfigSupport
         );
 
         LethalConfigManager.AddConfigItem(streamerMode);
+        LethalConfigManager.AddConfigItem(fairRandomizer);
 
         LethalConfigManager.AddConfigItem(dropItemsOnTp);
         LethalConfigManager.AddConfigItem(tpOnDeath);
         LethalConfigManager.AddConfigItem(tpOddsOnDeath);
-        LethalConfigManager.AddConfigItem(tpOnClippng);
+        LethalConfigManager.AddConfigItem(tpOnClipping);
         LethalConfigManager.AddConfigItem(tpOddsOnClipping);
         LethalConfigManager.AddConfigItem(tpOnDamage);
         LethalConfigManager.AddConfigItem(tpOddsOnDamage);

@@ -14,12 +14,14 @@ Here is a non-exhaustive list of features. Some will remain hidden as they're me
 
 ## 🔩 Settings
 - `Streamer Mode`: It's not because of any gore content, it's just because sometimes, the Backrooms can have speakers that broadcast music which can be occasionally copyrighted. It replaces the copyrighted musics with copyright-free musics.
+- `Use Fair Randomizer`: Whether to use a fair randomizer (a.k.a. pity system in gacha games) or a normal random number generator for random events (e.g. Teleports)
 - `Teleport On Death`: If enabled, player can be teleported to the backrooms with a certain % of chance.
 - `TP Odds On Death`: The % of chance to get TP to the backrooms when dying (see TP on Death)
 - `Teleport On Clipping`: If enabled, players will be teleported to the backrooms when clipping through the walls or floor. Yeah it can happen.
 - `TP Odds On Clipping`: //
 - `Teleport On Damage`: If enabled, player can be teleported when receiving damages, with a certain % of chance.
 - `TP Odds On Damage`: //
+- `Drop Held Items`: If enabled, will drop all the items on the ground when getting TP'd to the backrooms. 
 - `Generation Algorithm`: The generation algorithm for the backrooms. Doesn't require a restart, but will only apply the next round.
     - `Blob` (default): Blob Algorithm is the algorithm that pictures the best the feeling of the Backrooms, with rooms and corridors. It also is a perfect balance between generation speed and difficulty.
     - `Kruskal`: Kruskal Algorithm gives a more maze-ish style, while still having a lot of interconnections. It is very fast at generation and quite easy to navigate through.
@@ -35,6 +37,7 @@ Here is a non-exhaustive list of features. Some will remain hidden as they're me
 - Models and programming were made by myself
 - Textures are either from the game itself or from **[AmbientCG](https://ambientcg.com/)**.
 - Thanks to **[JacuJ](https://new.thunderstore.io/c/lethal-company/p/JacuJ/)** for helping me with modelling, I was a total noob before this project
-- Thanks **[TestAccount666](https://new.thunderstore.io/c/lethal-company/p/TestAccount666/)** for playtesting the mod !
+- Thanks to **[TestAccount666](https://new.thunderstore.io/c/lethal-company/p/TestAccount666/)** for playtesting the mod !
 - Thanks to **[s1ckboy](https://new.thunderstore.io/c/lethal-company/p/s1ckboy/)** for playtesting the mod too !
+- Thanks to **Moroxide** for providing me ambience sounds for the Backrooms !
 - Thanks to **Heymeelie/Neekhaulas** for making the original Backrooms mod 🤩

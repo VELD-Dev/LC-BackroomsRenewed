@@ -17,17 +17,29 @@ public class PlayerControllerB_Patches
     [HarmonyPrefix, HarmonyPatch(nameof(PlayerControllerB.KillPlayer))]
     public static bool KillPlayer(PlayerControllerB __instance)
     {
-        if (!SyncedConfig.Instance.TeleportOnDeath)
+        if (!__instance.IsOwner)
             return true;
         
-        if (!__instance.TryGetComponent<FairRandomizer>(out var randomizer))
-        {
-            randomizer = __instance.gameObject.AddComponent<FairRandomizer>();
-        }
+        if (!SyncedConfig.Instance.TeleportOnDeath)
+            return true;
 
-        var sendToTheBackrooms = randomizer.CheckChance(FairRandomizer.DEATH_EVENT,
-            SyncedConfig.Instance.TeleportationOddsOnDeath / 100f);
-        if (__instance.IsOwner && __instance.AllowPlayerDeath() && sendToTheBackrooms)
+        bool sendToTheBackrooms;
+        if (SyncedConfig.Instance.UseFairRandomizer)
+        {
+            if (!__instance.TryGetComponent<FairRandomizer>(out var randomizer))
+            {
+                randomizer = __instance.gameObject.AddComponent<FairRandomizer>();
+            }
+            
+            sendToTheBackrooms = randomizer.CheckChance(FairRandomizer.DEATH_EVENT,
+                SyncedConfig.Instance.TeleportationOddsOnDeath / 100f);
+        }
+        else
+        {
+            sendToTheBackrooms = Random.Range(0, 100) < SyncedConfig.Instance.TeleportationOddsOnDeath;
+        }
+        
+        if (__instance.AllowPlayerDeath() && sendToTheBackrooms)
         {
             // PROXY DEATH HAHAHAHA
             if (SyncedConfig.Instance.DropHeldItemsOnTeleport)

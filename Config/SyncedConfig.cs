@@ -5,6 +5,7 @@ namespace VELDDev.BackroomsRenewed.Config;
 
 public class SyncedConfig : Synchronizable<SyncedConfig>
 {
+    public bool UseFairRandomizer;
     public bool TeleportOnDeath;
     public bool TeleportOnClipping;
     public bool TeleportOnDamage;
@@ -21,6 +22,7 @@ public class SyncedConfig : Synchronizable<SyncedConfig>
         config = cfg;
         
         // TODO: Add security to prevent Non-hosts from modifying the Instance when Synced. (Local function?)
+        config.UseFairRandomizer.SettingChanged += (v, _) => UseFairRandomizer = (bool)v;
         config.TeleportOnDeath.SettingChanged += (v, _) => TeleportOnDeath = (bool)v;
         config.TeleportOnClipping.SettingChanged += (v, _) => TeleportOnClipping = (bool)v;
         config.TeleportOnDamage.SettingChanged += (v, _) => TeleportOnDamage = (bool)v;
@@ -32,6 +34,7 @@ public class SyncedConfig : Synchronizable<SyncedConfig>
         // Force synchronization when host changes settings.
         cfg.CfgFile.SettingChanged += (_, __) => BroadcastSync();
         
+        UseFairRandomizer = config.UseFairRandomizer.Value;
         TeleportOnDeath = config.TeleportOnDeath.Value;
         TeleportOnClipping = config.TeleportOnClipping.Value;
         TeleportOnDamage = config.TeleportOnDamage.Value;
