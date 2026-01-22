@@ -4,7 +4,7 @@ namespace VELDDev.BackroomsRenewed.Patches;
 public class RoundManager_Patches
 {
     [HarmonyPostfix, HarmonyPatch(nameof(RoundManager.DespawnPropsAtEndOfRound))]
-    public void DespawnBackroomsAt(RoundManager __instance)
+    public static void DespawnBackroomsAt(RoundManager __instance)
     {
         if (!__instance.IsServer)
             return;
@@ -16,7 +16,7 @@ public class RoundManager_Patches
     }
 
     [HarmonyPostfix, HarmonyPatch(nameof(RoundManager.SpawnSyncedProps))]
-    public void SpawnBackroomsAtStartOfRound(RoundManager __instance)
+    public static void SpawnBackroomsAtStartOfRound(RoundManager __instance)
     {
         if (!__instance.IsServer)
             return;
