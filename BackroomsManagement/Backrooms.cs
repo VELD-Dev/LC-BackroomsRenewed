@@ -202,10 +202,10 @@ public class Backrooms : NetworkBehaviour
 
                 const int LIGHT_GO_CHANCE_PERCENT = 30;
                 const int LIGHT_ON_CHANCE_PERCENT = 60;
-                var putLightFlag = Random.RandomRangeInt(0, 101) < LIGHT_GO_CHANCE_PERCENT;
+                var putLightFlag = Random.Range(0, 101) < LIGHT_GO_CHANCE_PERCENT;
                 if(putLightFlag)
                 {
-                    var lightOnFlag = Random.RandomRangeInt(0, 101) < LIGHT_ON_CHANCE_PERCENT;
+                    var lightOnFlag = Random.Range(0, 101) < LIGHT_ON_CHANCE_PERCENT;
                     cellmono.InitializeClientRpc(cell, true, lightOnFlag);
                 }
                 else

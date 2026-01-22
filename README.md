@@ -39,5 +39,5 @@ Here is a non-exhaustive list of features. Some will remain hidden as they're me
 - Thanks to **[JacuJ](https://new.thunderstore.io/c/lethal-company/p/JacuJ/)** for helping me with modelling, I was a total noob before this project
 - Thanks to **[TestAccount666](https://new.thunderstore.io/c/lethal-company/p/TestAccount666/)** for playtesting the mod !
 - Thanks to **[s1ckboy](https://new.thunderstore.io/c/lethal-company/p/s1ckboy/)** for playtesting the mod too !
-- Thanks to **Moroxide** for providing me ambience sounds for the Backrooms !
+- Thanks to **Moroxide** for providing and editing ambience sounds for the Backrooms !
 - Thanks to **Heymeelie/Neekhaulas** for making the original Backrooms mod 🤩
