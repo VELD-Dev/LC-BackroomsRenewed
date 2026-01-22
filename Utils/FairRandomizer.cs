@@ -7,11 +7,6 @@ public class FairRandomizer : NetworkBehaviour
     public const string DAMAGE_EVENT = "OnDamage";
     public const string CLIPPING_EVENT = "OnClipping";
 
-    /// <summary>
-    /// How much luck increases per failed roll (default 5%)
-    /// </summary>
-    public float luckIncrement = 0.05f;
-
     public Dictionary<string, float> luckDictionary = [];
 
     void Awake()
@@ -23,8 +18,8 @@ public class FairRandomizer : NetworkBehaviour
     }
 
     /// <summary>
-    /// Checks if the event should trigger based on threshold + accumulated luck.
-    /// On success: resets luck to 0. On failure: increases luck by luckIncrement.
+    /// Checks if the event should trigger based on accumulated luck. It's a pity system.
+    /// On success: resets luck to 0. On failure: increases luck by chance.
     /// </summary>
     /// <param name="eventName">The event type (use constants like DEATH_EVENT)</param>
     /// <param name="chance">Chance (percentage * 100)</param>
