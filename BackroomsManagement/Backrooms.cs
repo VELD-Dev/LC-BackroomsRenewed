@@ -119,7 +119,7 @@ public class Backrooms : NetworkBehaviour
     
     private void GenerateBackrooms()
     {
-        if(!NetworkManager.Singleton.IsHost || !IsServer)
+        if(!NetworkManager.Singleton.IsHost && !IsServer)
             return;
 
         // Reset usage counter and required variants tracking for new generation

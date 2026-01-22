@@ -10,7 +10,7 @@ public class Plugin : BaseUnityPlugin
     internal AssetBundle assetBundle;
     internal GameObject BackroomsPrefab;
 
-    void Start()
+    void Awake()
     {
         NetcodePatch();
         
