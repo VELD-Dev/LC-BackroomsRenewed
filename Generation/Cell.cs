@@ -11,14 +11,39 @@ public enum WallFlags : byte
 }
 
 [Serializable]
-public class Cell
+public class Cell : INetworkSerializable, IEquatable<Cell>
 {
     public WallFlags Walls;
     public Vector2Int position;
     
-    public Cell(int x, int y)
+    public Cell()
     {
-        position = new Vector2Int(x, y);
         Walls = WallFlags.North | WallFlags.East | WallFlags.South | WallFlags.West;
+    }
+
+    public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
+    {
+        serializer.SerializeValue(ref Walls);
+        serializer.SerializeValue(ref position);
+    }
+
+    public bool Equals(Cell? other)
+    {
+        if (other is null) return false;
+        if (ReferenceEquals(this, other)) return true;
+        return Walls == other.Walls && position.Equals(other.position);
+    }
+
+    public override bool Equals(object? obj)
+    {
+        if (obj is null) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        if (obj.GetType() != GetType()) return false;
+        return Equals((Cell)obj);
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine((int)Walls, position);
     }
 }

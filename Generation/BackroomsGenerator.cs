@@ -48,7 +48,7 @@ public class BackroomsGenerator : MonoBehaviour
         {
             for (int y = 0; y < height; y++)
             {
-                cells[x, y] = new Cell(x, y);
+                cells[x, y] = new Cell { position = new(x, y) };
             }
         }
     }

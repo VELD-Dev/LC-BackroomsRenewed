@@ -60,7 +60,7 @@ public class Backrooms : NetworkBehaviour
             }
             else
             {
-                TwinkleRandomLights();
+                TwinkleRandomLightsClientRpc();
                 _timeSinceLastTwinkleCheck = 0f;
                 _nextTwinkleCheckTime = Random.Range(3f, 15f);
             }
@@ -245,7 +245,7 @@ public class Backrooms : NetworkBehaviour
     }
 
     [ClientRpc]
-    private void TwinkleRandomLights()
+    private void TwinkleRandomLightsClientRpc()
     {
         foreach(var cell in Cells)
         {
