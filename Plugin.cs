@@ -10,6 +10,8 @@ public class Plugin : BaseUnityPlugin
     internal AssetBundle assetBundle;
     internal GameObject BackroomsPrefab;
     internal LocalConfig Configs;
+    
+    internal readonly string PluginDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
     void Awake()
     {
@@ -28,9 +30,9 @@ public class Plugin : BaseUnityPlugin
         logger.LogInfo(""">>> [x] P#TCH#S #PPL##D""");
 
         // I understood the lesson, Thunderstore, no more embedded assets !
-        assetBundle = AssetBundle.LoadFromFile("./backroomsrenewed.assets");
+        assetBundle = AssetBundle.LoadFromFile(Path.Combine(PluginDir, "backroomsrenewed.assets"));
         RegisterPrefabs();
-        logger.LogInfo(""">>> [x] #SS#T B#NDL# L##D#D""");
+        logger.LogInfo(""">>> [x] #SS#T B#NDL# L##D#D; #SS#TS L##D#D""");
         Configs = new LocalConfig(Config);
         logger.LogInfo("""\\\ /!\ #RR#R: #NT#GR#T# CH#CK F##L#R# -- PR#C##D C#R#F#LL# /!\ ///""");
         logger.LogInfo(""">>> Entering the b--#c__ro#^m:s~""");
