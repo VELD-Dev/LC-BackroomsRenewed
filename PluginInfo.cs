@@ -8,7 +8,6 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyCopyright("GPL-3.0 License")]
 [assembly: AssemblyTitle(VELDDev.BackroomsRenewed.PluginInfo.PluginName)]
 [assembly: AssemblyCulture("en-GB")]
-[assembly: Guid(VELDDev.BackroomsRenewed.PluginInfo.GUID)]
 
 namespace VELDDev.BackroomsRenewed;
 
