@@ -1,6 +1,6 @@
 {
     "name": "Backrooms_Renewed",
-    "description": "ENT#R TH# BACKR##MS - A new Backroom mod, completely reimagined. New mechanics, more customization.",
+    "description": "ENT#R TH# BACKR##MS - A new Backroom mod, completely reimagined. Enter an eerie world, oddly familiar but uncomfortable, in between slumber and consciousness, in the twilight of your mind.",
     "version_number": "0.1.0",
     "dependencies": [
         "BepInEx-BepInExPack-5.4.2304",

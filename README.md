@@ -34,6 +34,7 @@ Here is a non-exhaustive list of features. Some will remain hidden as they're me
 ## Credits
 - Models and programming were made by myself
 - Textures are either from the game itself or from **[AmbientCG](https://ambientcg.com/)**.
-- Thanks to JacuJ for helping me with modelling, I was a total noob before this project
-- Thanks **BeanAccount666** for the Backrooms Patch mod that kept the original Backrooms mod alive for so long !
-- Thanks to **Heymeelie** for making the original Backrooms mod 🤩
+- Thanks to **[JacuJ](https://new.thunderstore.io/c/lethal-company/p/JacuJ/)** for helping me with modelling, I was a total noob before this project
+- Thanks **[TestAccount666](https://new.thunderstore.io/c/lethal-company/p/TestAccount666/)** for playtesting the mod !
+- Thanks to **[s1ckboy](https://new.thunderstore.io/c/lethal-company/p/s1ckboy/)** for playtesting the mod too !
+- Thanks to **Heymeelie/Neekhaulas** for making the original Backrooms mod 🤩
