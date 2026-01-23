@@ -6,15 +6,19 @@ public class FairRandomizer : NetworkBehaviour
     public const string OPEN_DOOR_EVENT = "OnEnterFacility";
     public const string DAMAGE_EVENT = "OnDamage";
     public const string CLIPPING_EVENT = "OnClipping";
+    public const string SHIP_TP = "OnShipTP";
+    public const string SHIP_REV_TP = "OnShipRevTP";
 
-    public Dictionary<string, float> luckDictionary = [];
+    public readonly Dictionary<string, float> LuckDictionary = [];
 
     void Awake()
     {
-        luckDictionary.Add(DEATH_EVENT, 0f);
-        luckDictionary.Add(OPEN_DOOR_EVENT, 0f);
-        luckDictionary.Add(DAMAGE_EVENT, 0f);
-        luckDictionary.Add(CLIPPING_EVENT, 0f);
+        LuckDictionary.Add(DEATH_EVENT, 0f);
+        LuckDictionary.Add(OPEN_DOOR_EVENT, 0f);
+        LuckDictionary.Add(DAMAGE_EVENT, 0f);
+        LuckDictionary.Add(CLIPPING_EVENT, 0f);
+        LuckDictionary.Add(SHIP_TP, 0f);
+        LuckDictionary.Add(SHIP_REV_TP, 0f);
     }
 
     /// <summary>
@@ -26,7 +30,7 @@ public class FairRandomizer : NetworkBehaviour
     /// <returns>True if the event triggers (player gets teleported)</returns>
     public bool CheckChance(string eventName, float chance)
     {
-        if (!luckDictionary.TryGetValue(eventName, out float currentLuck))
+        if (!LuckDictionary.TryGetValue(eventName, out float currentLuck))
         {
             Plugin.Instance.logger.LogWarning($"FairRandomizer: Unknown event '{eventName}', defaulting to base threshold.");
             currentLuck = 0f;
@@ -36,12 +40,12 @@ public class FairRandomizer : NetworkBehaviour
 
         if (roll < currentLuck)
         {
-            luckDictionary[eventName] = 0f;
+            LuckDictionary[eventName] = 0f;
             return true;
         }
         
         // Failure - increase luck for next time
-        luckDictionary[eventName] += chance;
+        LuckDictionary[eventName] += chance;
         return false;
     }
 
@@ -50,9 +54,9 @@ public class FairRandomizer : NetworkBehaviour
     /// </summary>
     public void ResetLuck(string eventName)
     {
-        if (luckDictionary.ContainsKey(eventName))
+        if (LuckDictionary.ContainsKey(eventName))
         {
-            luckDictionary[eventName] = 0f;
+            LuckDictionary[eventName] = 0f;
         }
     }
 
@@ -61,9 +65,9 @@ public class FairRandomizer : NetworkBehaviour
     /// </summary>
     public void ResetAllLuck()
     {
-        foreach (var key in luckDictionary.Keys.ToList())
+        foreach (var key in LuckDictionary.Keys.ToList())
         {
-            luckDictionary[key] = 0f;
+            LuckDictionary[key] = 0f;
         }
     }
 }

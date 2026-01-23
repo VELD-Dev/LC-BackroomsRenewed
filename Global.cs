@@ -25,3 +25,4 @@ global using Quaternion = UnityEngine.Quaternion;
 global using VELDDev.BackroomsRenewed.Generation;
 global using VELDDev.BackroomsRenewed.Config;
 global using VELDDev.BackroomsRenewed.BackroomsManagement;
+global using VELDDev.BackroomsRenewed.Utils;

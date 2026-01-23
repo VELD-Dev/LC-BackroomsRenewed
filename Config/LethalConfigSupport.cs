@@ -76,6 +76,17 @@ internal static class LethalConfigSupport
                 RequiresRestart = false,
                 CanModifyCallback = NetworkAllowModifyCb
             });
+        var tpOnDoorInteract = new BoolCheckBoxConfigItem(
+            config.TeleportOnInteractDoor,
+            new BoolCheckBoxOptions
+            {
+                Name = "Teleport on Entrance/Exit",
+                Description =
+                    "Allows teleportation when entering/exiting the Facility. See also 'Teleportation Odds on Entrance/Exit'.",
+                Section = "Teleportation",
+                RequiresRestart = false,
+                CanModifyCallback = NetworkAllowModifyCb
+            });
 
 
         var tpOddsOnDeath = new FloatSliderConfigItem(
@@ -113,6 +124,17 @@ internal static class LethalConfigSupport
                 Max = 100f,
                 RequiresRestart = false,
                 CanModifyCallback = () => config.TeleportOnDamage.Value && NetworkAllowModifyCb()
+            });
+        var tpOddsOnDoorInteract = new FloatSliderConfigItem(
+            config.TeleportationOddsOnInteractDoor,
+            new FloatSliderOptions
+            {
+                Name = "Teleportation Odds on Entrance/Exit",
+                Description = "The chance percentage of teleportation ocurring on entering/exiting the Facility.",
+                Min = 0f,
+                Max = 100f,
+                RequiresRestart = false,
+                CanModifyCallback = () => config.TeleportOnInteractDoor.Value && NetworkAllowModifyCb()
             });
 
         var dropItemsOnTp = new BoolCheckBoxConfigItem(

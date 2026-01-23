@@ -9,9 +9,15 @@ public class SyncedConfig : Synchronizable<SyncedConfig>
     public bool TeleportOnDeath;
     public bool TeleportOnClipping;
     public bool TeleportOnDamage;
+    public bool TeleportOnInteractDoor;
+    public bool TeleportOnShipTP;
+    public bool TeleportOnShipRevTP;
     public float TeleportationOddsOnDeath;
     public float TeleportationOddsOnClipping;
     public float TeleportationOddsOnDamage;
+    public float TeleportationOddsOnInteractDoor;
+    public float TeleportationOddsOnShipTP;
+    public float TeleportationOddsOnShipRevTP;
     public bool DropHeldItemsOnTeleport;
 
     [NonSerialized] public LocalConfig config;
@@ -26,9 +32,15 @@ public class SyncedConfig : Synchronizable<SyncedConfig>
         config.TeleportOnDeath.SettingChanged += (v, _) => TeleportOnDeath = (bool)v;
         config.TeleportOnClipping.SettingChanged += (v, _) => TeleportOnClipping = (bool)v;
         config.TeleportOnDamage.SettingChanged += (v, _) => TeleportOnDamage = (bool)v;
+        config.TeleportOnInteractDoor.SettingChanged += (v, _) => TeleportOnInteractDoor = (bool)v;
+        config.TeleportOnShipTeleport.SettingChanged += (v, _) => TeleportOnShipTP = (bool)v;
+        config.TeleportOnShipRevertTeleport.SettingChanged += (v, _) => TeleportOnShipRevTP = (bool)v;
         config.TeleportationOddsOnDeath.SettingChanged += (v, _) => TeleportationOddsOnDeath = (float)v;
         config.TeleportationOddsOnClipping.SettingChanged += (v, _) => TeleportationOddsOnClipping = (float)v;
         config.TeleportationOddsOnDamage.SettingChanged += (v, _) => TeleportationOddsOnDamage = (float)v;
+        config.TeleportationOddsOnInteractDoor.SettingChanged += (v, _) => TeleportationOddsOnInteractDoor = (float)v;
+        config.TeleportationOddsOnShipTeleport.SettingChanged += (v, _) => TeleportationOddsOnShipTP = (float)v;
+        config.TeleportationOddsOnShipTeleport.SettingChanged += (v, _) => TeleportationOddsOnShipRevTP = (float)v;
         config.DropHeldItemsOnTeleport.SettingChanged += (v, _) => DropHeldItemsOnTeleport = (bool)v;
 
         // Force synchronization when host changes settings.
@@ -38,9 +50,15 @@ public class SyncedConfig : Synchronizable<SyncedConfig>
         TeleportOnDeath = config.TeleportOnDeath.Value;
         TeleportOnClipping = config.TeleportOnClipping.Value;
         TeleportOnDamage = config.TeleportOnDamage.Value;
+        TeleportOnInteractDoor = config.TeleportOnInteractDoor.Value;
+        TeleportOnShipTP = config.TeleportOnShipTeleport.Value;
+        TeleportOnShipRevTP = config.TeleportOnShipRevertTeleport.Value;
         TeleportationOddsOnDeath = config.TeleportationOddsOnDeath.Value;
         TeleportationOddsOnClipping = config.TeleportationOddsOnClipping.Value;
         TeleportationOddsOnDamage = config.TeleportationOddsOnDamage.Value;
+        TeleportationOddsOnInteractDoor = config.TeleportationOddsOnInteractDoor.Value;
+        TeleportationOddsOnShipTP = config.TeleportationOddsOnShipTeleport.Value;
+        TeleportationOddsOnShipRevTP = config.TeleportationOddsOnShipRevertTeleport.Value;
         DropHeldItemsOnTeleport = config.DropHeldItemsOnTeleport.Value;
     }
 

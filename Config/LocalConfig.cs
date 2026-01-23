@@ -13,9 +13,15 @@ public class LocalConfig
     public readonly ConfigEntry<bool> TeleportOnDeath;
     public readonly ConfigEntry<bool> TeleportOnClipping;
     public readonly ConfigEntry<bool> TeleportOnDamage;
+    public readonly ConfigEntry<bool> TeleportOnInteractDoor;
+    public readonly ConfigEntry<bool> TeleportOnShipTeleport;
+    public readonly ConfigEntry<bool> TeleportOnShipRevertTeleport;
     public readonly ConfigEntry<float> TeleportationOddsOnDeath; // Percentage
     public readonly ConfigEntry<float> TeleportationOddsOnClipping; // Percentage
     public readonly ConfigEntry<float> TeleportationOddsOnDamage; // Percentage
+    public readonly ConfigEntry<float> TeleportationOddsOnInteractDoor; // Percentage
+    public readonly ConfigEntry<float> TeleportationOddsOnShipTeleport; // Percentage
+    public readonly ConfigEntry<float> TeleportationOddsOnShipRevertTeleport; // Percentage
     public readonly ConfigEntry<bool> DropHeldItemsOnTeleport;
     public readonly ConfigEntry<BackroomsGenerator.MazeAlgorithm> GenerationAlgorithm;
     public readonly ConfigEntry<int> MinBackroomsSize;
@@ -61,6 +67,24 @@ public class LocalConfig
             false,
             "Enable teleportation on taking damage."
         );
+        TeleportOnInteractDoor = cfg.Bind(
+            "Teleportation",
+            "Teleport on Entrance/Exit",
+            true,
+            "Enable teleportation when entering/exiting the facility"
+        );
+        TeleportOnShipTeleport = cfg.Bind(
+            "Teleportation",
+            "Teleport on Ship Teleport",
+            true,
+            "Enable teleportation when using Ship Teleporter"
+        );
+        TeleportOnShipRevertTeleport = cfg.Bind(
+            "Teleport",
+            "Teleport on Ship Revert TP",
+            true,
+            "Enable teleportation when using the Ship Revert Teleporter"
+        );
 
         // ODDS
         TeleportationOddsOnDeath = cfg.Bind(
@@ -72,14 +96,32 @@ public class LocalConfig
         TeleportationOddsOnClipping = cfg.Bind(
             "Teleportation",
             "Teleportation Odds on Clipping",
-            10f,
-            "The percentage chance of teleportation occurring on clipping through walls."
+            100f,
+            "The chance percentage of teleportation occurring on clipping through walls."
         );
         TeleportationOddsOnDamage = cfg.Bind(
             "Teleportation",
             "Teleportation Odds on Damage",
             1f,
             "The percentage chance of teleportation occurring on taking damage."
+        );
+        TeleportationOddsOnInteractDoor = cfg.Bind(
+            "Teleportation",
+            "Telportation Odds On Entrance/Exit",
+            0.1f,
+            "The chance percentage of teleportation occurring when entering or exiting the facility"
+        );
+        TeleportationOddsOnShipTeleport = cfg.Bind(
+            "Teleportation",
+            "Teleportation Odds on Ship Teleport",
+            0.1f,
+            "The chance percentage of teleportation occurring when using the ship teleporter."
+        );
+        TeleportationOddsOnShipRevertTeleport = cfg.Bind(
+            "Teleportation",
+            "Teleportation Odds on Ship Revert TP",
+            1f,
+            "The chance percentage of teleportation occurring when using the ship revert teleporter"
         );
         DropHeldItemsOnTeleport = cfg.Bind(
             "Teleportation",
