@@ -7,10 +7,10 @@ namespace VELDDev.BackroomsRenewed.BackroomsManagement;
 public class Backrooms : NetworkBehaviour
 {
     const float CELL_SIZE = 8f; // may be modified depending on how big I make the cells in blender
-    
+
     public static Backrooms Instance;
 
-    public List<CellVariantInfo> cellsVariants;     // Assign in inspector, different cell variants to randomize appearance
+    public List<BackroomThemeInfo> themes;          // Assign in inspector, available backroom themes
     public GameObject exitPrefab;                   // Assign in inspector, exit prefab
     public Transform CellsHolder;                   // Assign in inspector, parent transform for all cells
     public NavMeshSurface BackroomsNavMesh;          // Assign in inspector, the NavMeshSurface component to build the navmesh
@@ -22,6 +22,8 @@ public class Backrooms : NetworkBehaviour
     public NetworkVariable<bool> IsGenerated = new(false);
 
     [HideInInspector] public CellBehaviour[,] Cells;
+
+    public BackroomThemeInfo CurrentTheme { get; private set; }
 
     private readonly Dictionary<CellVariantInfo, int> _variantUsageCount = [];
     private readonly HashSet<CellVariantInfo> _requiredVariantsNotYetSpawned = [];
@@ -46,6 +48,43 @@ public class Backrooms : NetworkBehaviour
         {
             GenerateBackrooms();
         }
+    }
+
+    private void SelectTheme()
+    {
+        if (themes == null || themes.Count == 0)
+        {
+            Plugin.Instance.logger.LogError("No themes configured! Cannot generate backrooms.");
+            return;
+        }
+
+        // Single theme - no need for weighted selection
+        if (themes.Count == 1)
+        {
+            CurrentTheme = themes[0];
+            Plugin.Instance.logger.LogInfo($"Theme selected: {CurrentTheme.themeName}");
+            return;
+        }
+
+        // Weighted random selection
+        float totalWeight = themes.Sum(t => t.weight);
+        float randomValue = Random.Range(0f, totalWeight);
+        float cumulativeWeight = 0f;
+
+        foreach (var theme in themes)
+        {
+            cumulativeWeight += theme.weight;
+            if (randomValue <= cumulativeWeight)
+            {
+                CurrentTheme = theme;
+                Plugin.Instance.logger.LogInfo($"Theme selected: {CurrentTheme.themeName}");
+                return;
+            }
+        }
+
+        // Fallback
+        CurrentTheme = themes[^1];
+        Plugin.Instance.logger.LogInfo($"Theme selected: {CurrentTheme.themeName}");
     }
 
     void FixedUpdate()
@@ -197,10 +236,15 @@ public class Backrooms : NetworkBehaviour
         if(!NetworkManager.Singleton.IsHost && !IsServer)
             return;
 
+        // Select theme for this generation
+        SelectTheme();
+        if (CurrentTheme == null)
+            return;
+
         // Reset usage counter and required variants tracking for new generation
         _variantUsageCount.Clear();
         _requiredVariantsNotYetSpawned.Clear();
-        foreach(var variant in cellsVariants)
+        foreach(var variant in CurrentTheme.CellsVariants)
         {
             _variantUsageCount[variant] = 0;
             if(variant.mustSpawnAtLeastOnce)
@@ -355,14 +399,14 @@ public class Backrooms : NetworkBehaviour
         }
 
         // Normal weighted random selection for all available variants
-        var availableVariants = cellsVariants.Where(v =>
+        var availableVariants = CurrentTheme.CellsVariants.Where(v =>
             v.maxAmount == -1 || _variantUsageCount[v] < v.maxAmount
         ).ToList();
 
         // If no variants available (all maxed out), return the first variant as fallback
         if(availableVariants.Count == 0)
         {
-            return cellsVariants[0];
+            return CurrentTheme.CellsVariants[0];
         }
 
         return SelectWeightedRandom(availableVariants);

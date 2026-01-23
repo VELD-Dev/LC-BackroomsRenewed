@@ -15,6 +15,6 @@ MonoBehaviour:
   themeName: L#V#L 0
   CellsVariants:
   - {fileID: 11400000, guid: 0fbed6d855c61565d9622863aaab80c3, type: 2}
-  AmbienNoise: {fileID: 0}
+  AmbientNoise: {fileID: 8300000, guid: a18b391dc9a78a949a67c1374702f23c, type: 3}
   AmbientMusics: []
   weight: 300
