@@ -67,26 +67,101 @@ public class Backrooms : NetworkBehaviour
         }
     }
 
-    public void TeleportLocalPlayerSomewhereInBackrooms()
+    /// <summary>
+    /// Teleports a player to a random position in the backrooms.
+    /// This method is server-authoritative - it determines the position and broadcasts to all clients.
+    /// </summary>
+    /// <param name="targetPlayer">The player to teleport</param>
+    /// <param name="dropItems">Whether to drop held items before teleporting</param>
+    public void TeleportPlayerToBackrooms(PlayerControllerB targetPlayer, bool dropItems = false)
     {
-        var localPlayer = GameNetworkManager.Instance.localPlayerController;
-        var randomPos = PickRandomPosOnNavmesh();
-
-        if(randomPos.HasValue)
+        if (IsServer)
         {
-            localPlayer.TeleportPlayer(randomPos.Value);
+            // Server picks the position and broadcasts to all clients
+            var randomPos = PickRandomPosOnNavmesh();
+            var targetPos = randomPos ?? GetFallbackPosition();
+
+            if (!randomPos.HasValue)
+            {
+                Plugin.Instance.logger.LogWarning("Failed to find valid NavMesh position, using fallback center position");
+            }
+
+            TeleportPlayerClientRpc(targetPlayer.playerClientId, targetPos, dropItems);
         }
         else
         {
-            // Fallback: teleport to center of backrooms if NavMesh sampling fails
-            var fallbackPos = new Vector3(
-                (generator.width * CELL_SIZE) / 2f,
-                -1000f,
-                (generator.height * CELL_SIZE) / 2f
-            );
-            localPlayer.TeleportPlayer(fallbackPos);
+            // Client requests teleportation from server
+            RequestTeleportServerRpc(targetPlayer.playerClientId, dropItems);
+        }
+    }
+
+    /// <summary>
+    /// Legacy method for backwards compatibility. Calls TeleportPlayerToBackrooms.
+    /// </summary>
+    [Obsolete("Use TeleportPlayerToBackrooms instead for server-authoritative teleportation")]
+    public void TeleportLocalPlayerSomewhereInBackrooms(PlayerControllerB targetPlayer)
+    {
+        TeleportPlayerToBackrooms(targetPlayer, SyncedConfig.Instance.DropHeldItemsOnTeleport);
+    }
+
+    /// <summary>
+    /// Request the server to teleport a player to the backrooms.
+    /// </summary>
+    [ServerRpc(RequireOwnership = false)]
+    public void RequestTeleportServerRpc(ulong playerClientId, bool dropItems)
+    {
+        var randomPos = PickRandomPosOnNavmesh();
+        var targetPos = randomPos ?? GetFallbackPosition();
+
+        if (!randomPos.HasValue)
+        {
             Plugin.Instance.logger.LogWarning("Failed to find valid NavMesh position, using fallback center position");
         }
+
+        TeleportPlayerClientRpc(playerClientId, targetPos, dropItems);
+    }
+
+    /// <summary>
+    /// Server broadcasts teleportation to all clients. Each client executes teleport for the target player.
+    /// </summary>
+    [ClientRpc]
+    private void TeleportPlayerClientRpc(ulong playerClientId, Vector3 position, bool dropItems)
+    {
+        var targetPlayer = GetPlayerByClientId(playerClientId);
+        if (targetPlayer == null)
+        {
+            Plugin.Instance.logger.LogWarning($"TeleportPlayerClientRpc: Could not find player with clientId {playerClientId}");
+            return;
+        }
+
+        if (dropItems && targetPlayer.IsOwner)
+        {
+            targetPlayer.DropAllHeldItems();
+            targetPlayer.DisableJetpackControlsLocally();
+        }
+
+        targetPlayer.TeleportPlayer(position, true);
+    }
+
+    private Vector3 GetFallbackPosition()
+    {
+        return new Vector3(
+            (generator.width * CELL_SIZE) / 2f,
+            -1000f,
+            (generator.height * CELL_SIZE) / 2f
+        );
+    }
+
+    private PlayerControllerB GetPlayerByClientId(ulong clientId)
+    {
+        foreach (var player in StartOfRound.Instance.allPlayerScripts)
+        {
+            if (player.playerClientId == clientId)
+            {
+                return player;
+            }
+        }
+        return null;
     }
 
     private Vector3? PickRandomPosOnNavmesh(int maxAttempts = 30)

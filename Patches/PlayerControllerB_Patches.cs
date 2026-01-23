@@ -19,7 +19,7 @@ public class PlayerControllerB_Patches
     {
         if (!__instance.IsOwner)
             return true;
-        
+
         if (!SyncedConfig.Instance.TeleportOnDeath)
             return true;
 
@@ -30,25 +30,19 @@ public class PlayerControllerB_Patches
             {
                 randomizer = __instance.gameObject.AddComponent<FairRandomizer>();
             }
-            
-            sendToTheBackrooms = randomizer.CheckChance(FairRandomizer.DEATH_EVENT,
+
+            sendToTheBackrooms = randomizer.CheckChance(FairRandomizerEvent.Death,
                 SyncedConfig.Instance.TeleportationOddsOnDeath / 100f);
         }
         else
         {
             sendToTheBackrooms = Random.Range(0f, 101f) < SyncedConfig.Instance.TeleportationOddsOnDeath;
         }
-        
+
         if (__instance.AllowPlayerDeath() && sendToTheBackrooms)
         {
-            // PROXY DEATH HAHAHAHA
-            if (SyncedConfig.Instance.DropHeldItemsOnTeleport)
-            {
-                __instance.DropAllHeldItems();
-                __instance.DisableJetpackControlsLocally();
-            }
-            
-            Backrooms.Instance.TeleportLocalPlayerSomewhereInBackrooms();
+            // PROXY DEATH - teleport to backrooms instead of dying
+            Backrooms.Instance.TeleportPlayerToBackrooms(__instance, SyncedConfig.Instance.DropHeldItemsOnTeleport);
             return false;
         }
 
@@ -58,7 +52,7 @@ public class PlayerControllerB_Patches
     [HarmonyPrefix, HarmonyPatch(nameof(PlayerControllerB.DamagePlayer))]
     public static void DamagePlayer(PlayerControllerB __instance, ref int ___damageNumber)
     {
-        if(!__instance.IsOwner)
+        if (!__instance.IsOwner)
             return;
 
         if (!SyncedConfig.Instance.TeleportOnDamage)
@@ -72,7 +66,7 @@ public class PlayerControllerB_Patches
                 randomizer = __instance.gameObject.AddComponent<FairRandomizer>();
             }
 
-            sendToTheBackrooms = randomizer.CheckChance(FairRandomizer.DAMAGE_EVENT,
+            sendToTheBackrooms = randomizer.CheckChance(FairRandomizerEvent.Damage,
                 SyncedConfig.Instance.TeleportationOddsOnDamage / 100f);
         }
         else
@@ -82,13 +76,8 @@ public class PlayerControllerB_Patches
 
         if (sendToTheBackrooms)
         {
-            if (SyncedConfig.Instance.DropHeldItemsOnTeleport)
-            {
-                __instance.DropAllHeldItems();
-                __instance.DisableJetpackControlsLocally();
-            }
-            
-            Backrooms.Instance.TeleportLocalPlayerSomewhereInBackrooms();
+            Backrooms.Instance.TeleportPlayerToBackrooms(__instance, SyncedConfig.Instance.DropHeldItemsOnTeleport);
+            // Prevent lethal damage when teleporting to backrooms
             if (__instance.health - ___damageNumber < 0)
             {
                 ___damageNumber = __instance.health - 1;

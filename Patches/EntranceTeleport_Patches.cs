@@ -18,7 +18,7 @@ public class EntranceTeleport_Patches
                 randomizer = locPlayer.gameObject.AddComponent<FairRandomizer>();
             }
 
-            sendToTheBackrooms = randomizer.CheckChance(FairRandomizer.OPEN_DOOR_EVENT,
+            sendToTheBackrooms = randomizer.CheckChance(FairRandomizerEvent.OpenDoor,
                 SyncedConfig.Instance.TeleportationOddsOnInteractDoor / 100f);
         }
         else
@@ -28,13 +28,7 @@ public class EntranceTeleport_Patches
 
         if (sendToTheBackrooms)
         {
-            if (SyncedConfig.Instance.DropHeldItemsOnTeleport)
-            {
-                locPlayer.DropAllHeldItems();
-                locPlayer.DisableJetpackControlsLocally();
-            }
-            
-            Backrooms.Instance.TeleportLocalPlayerSomewhereInBackrooms();
+            Backrooms.Instance.TeleportPlayerToBackrooms(locPlayer, SyncedConfig.Instance.DropHeldItemsOnTeleport);
         }
     }
 }
