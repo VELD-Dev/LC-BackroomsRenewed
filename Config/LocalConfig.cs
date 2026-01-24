@@ -160,5 +160,7 @@ public class LocalConfig
         {
             LethalConfigSupport.RegisterLethalConfig(this);
         }
+
+        var sconfig = new SyncedConfig(this);
     }
 }
