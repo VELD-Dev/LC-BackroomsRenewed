@@ -50,7 +50,7 @@ public class PlayerControllerB_Patches
     }
 
     [HarmonyPrefix, HarmonyPatch(nameof(PlayerControllerB.DamagePlayer))]
-    public static void DamagePlayer(PlayerControllerB __instance, ref int ___damageNumber)
+    public static void DamagePlayer(PlayerControllerB __instance, ref int damageNumber)
     {
         if (!__instance.IsOwner)
             return;
@@ -78,9 +78,9 @@ public class PlayerControllerB_Patches
         {
             Backrooms.Instance.TeleportPlayerToBackrooms(__instance, SyncedConfig.Instance.DropHeldItemsOnTeleport);
             // Prevent lethal damage when teleporting to backrooms
-            if (__instance.health - ___damageNumber < 0)
+            if (__instance.health - damageNumber < 0)
             {
-                ___damageNumber = __instance.health - 1;
+                damageNumber = __instance.health - 1;
             }
         }
     }
