@@ -2,7 +2,6 @@ namespace VELDDev.BackroomsRenewed.Utils;
 
 /// <summary>
 /// Enum representing the different event types for the FairRandomizer pity system.
-/// Using an enum allows for network synchronization via NetworkDictionary.
 /// </summary>
 public enum FairRandomizerEvent : byte
 {
@@ -34,8 +33,9 @@ public class FairRandomizer : NetworkBehaviour
         { SHIP_REV_TP, FairRandomizerEvent.ShipRevTP }
     };
 
-    // Network-synchronized luck dictionary using the custom NetworkLuckDictionary
-    private NetworkLuckDictionary _luckDictionary = null!;
+    // Network-synchronized parallel lists for luck values
+    private NetworkList<byte> _luckKeys = null!;
+    private NetworkList<float> _luckValues = null!;
 
     // Legacy dictionary for backwards compatibility (read-only access)
     public Dictionary<string, float> LuckDictionary
@@ -45,9 +45,9 @@ public class FairRandomizer : NetworkBehaviour
             var dict = new Dictionary<string, float>();
             foreach (var kvp in StringToEventMap)
             {
-                if (_luckDictionary.TryGetValue(kvp.Value, out float value))
+                if (TryGetLuckIndex(kvp.Value, out int index))
                 {
-                    dict[kvp.Key] = value;
+                    dict[kvp.Key] = _luckValues[index];
                 }
             }
             return dict;
@@ -57,9 +57,13 @@ public class FairRandomizer : NetworkBehaviour
     void Awake()
     {
         // Initialize with server-write permission so only server/host can modify luck values
-        _luckDictionary = new NetworkLuckDictionary(
-            NetworkVariableReadPermission.Everyone,
-            NetworkVariableWritePermission.Server
+        _luckKeys = new NetworkList<byte>(
+            readPerm: NetworkVariableReadPermission.Everyone,
+            writePerm: NetworkVariableWritePermission.Server
+        );
+        _luckValues = new NetworkList<float>(
+            readPerm: NetworkVariableReadPermission.Everyone,
+            writePerm: NetworkVariableWritePermission.Server
         );
     }
 
@@ -76,12 +80,51 @@ public class FairRandomizer : NetworkBehaviour
 
     private void InitializeLuckValues()
     {
-        _luckDictionary.TryAdd(FairRandomizerEvent.Death, 0f);
-        _luckDictionary.TryAdd(FairRandomizerEvent.OpenDoor, 0f);
-        _luckDictionary.TryAdd(FairRandomizerEvent.Damage, 0f);
-        _luckDictionary.TryAdd(FairRandomizerEvent.Clipping, 0f);
-        _luckDictionary.TryAdd(FairRandomizerEvent.ShipTP, 0f);
-        _luckDictionary.TryAdd(FairRandomizerEvent.ShipRevTP, 0f);
+        TryAddLuck(FairRandomizerEvent.Death, 0f);
+        TryAddLuck(FairRandomizerEvent.OpenDoor, 0f);
+        TryAddLuck(FairRandomizerEvent.Damage, 0f);
+        TryAddLuck(FairRandomizerEvent.Clipping, 0f);
+        TryAddLuck(FairRandomizerEvent.ShipTP, 0f);
+        TryAddLuck(FairRandomizerEvent.ShipRevTP, 0f);
+    }
+
+    private bool TryGetLuckIndex(FairRandomizerEvent eventType, out int index)
+    {
+        byte key = (byte)eventType;
+        for (int i = 0; i < _luckKeys.Count; i++)
+        {
+            if (_luckKeys[i] == key)
+            {
+                index = i;
+                return true;
+            }
+        }
+        index = -1;
+        return false;
+    }
+
+    private bool TryAddLuck(FairRandomizerEvent eventType, float value)
+    {
+        if (TryGetLuckIndex(eventType, out _))
+        {
+            return false;
+        }
+        _luckKeys.Add((byte)eventType);
+        _luckValues.Add(value);
+        return true;
+    }
+
+    private void SetLuck(FairRandomizerEvent eventType, float value)
+    {
+        if (TryGetLuckIndex(eventType, out int index))
+        {
+            _luckValues[index] = value;
+        }
+        else
+        {
+            _luckKeys.Add((byte)eventType);
+            _luckValues.Add(value);
+        }
     }
 
     /// <summary>
@@ -93,14 +136,19 @@ public class FairRandomizer : NetworkBehaviour
     /// <returns>True if the event triggers (player gets teleported)</returns>
     public bool CheckChance(FairRandomizerEvent eventType, float chance)
     {
-        if (!_luckDictionary.TryGetValue(eventType, out float currentLuck))
+        float currentLuck;
+        if (!TryGetLuckIndex(eventType, out int index))
         {
             Plugin.Instance.logger.LogWarning($"FairRandomizer: Event '{eventType}' not initialized, defaulting to base threshold.");
             currentLuck = 0f;
             if (IsServer)
             {
-                _luckDictionary.TryAdd(eventType, 0f);
+                TryAddLuck(eventType, 0f);
             }
+        }
+        else
+        {
+            currentLuck = _luckValues[index];
         }
 
         float roll = Random.Range(0f, 1f);
@@ -109,7 +157,7 @@ public class FairRandomizer : NetworkBehaviour
         {
             if (IsServer)
             {
-                _luckDictionary[eventType] = 0f;
+                SetLuck(eventType, 0f);
             }
             else
             {
@@ -122,7 +170,7 @@ public class FairRandomizer : NetworkBehaviour
         // Failure - increase luck for next time
         if (IsServer)
         {
-            _luckDictionary[eventType] = currentLuck + chance;
+            SetLuck(eventType, currentLuck + chance);
         }
         else
         {
@@ -154,7 +202,7 @@ public class FairRandomizer : NetworkBehaviour
     /// </summary>
     public float GetLuck(FairRandomizerEvent eventType)
     {
-        return _luckDictionary.TryGetValue(eventType, out float luck) ? luck : 0f;
+        return TryGetLuckIndex(eventType, out int index) ? _luckValues[index] : 0f;
     }
 
     /// <summary>
@@ -176,9 +224,9 @@ public class FairRandomizer : NetworkBehaviour
     {
         if (IsServer)
         {
-            if (_luckDictionary.ContainsKey(eventType))
+            if (TryGetLuckIndex(eventType, out int index))
             {
-                _luckDictionary[eventType] = 0f;
+                _luckValues[index] = 0f;
             }
         }
         else
@@ -205,12 +253,9 @@ public class FairRandomizer : NetworkBehaviour
     {
         if (IsServer)
         {
-            foreach (var eventType in Enum.GetValues(typeof(FairRandomizerEvent)).Cast<FairRandomizerEvent>())
+            for (int i = 0; i < _luckValues.Count; i++)
             {
-                if (_luckDictionary.ContainsKey(eventType))
-                {
-                    _luckDictionary[eventType] = 0f;
-                }
+                _luckValues[i] = 0f;
             }
         }
         else
@@ -222,36 +267,34 @@ public class FairRandomizer : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     private void ResetLuckServerRpc(FairRandomizerEvent eventType)
     {
-        if (_luckDictionary.ContainsKey(eventType))
+        if (TryGetLuckIndex(eventType, out int index))
         {
-            _luckDictionary[eventType] = 0f;
+            _luckValues[index] = 0f;
         }
     }
 
     [ServerRpc(RequireOwnership = false)]
     private void IncreaseLuckServerRpc(FairRandomizerEvent eventType, float amount)
     {
-        if (_luckDictionary.TryGetValue(eventType, out float currentLuck))
+        if (TryGetLuckIndex(eventType, out int index))
         {
-            _luckDictionary[eventType] = currentLuck + amount;
+            _luckValues[index] = _luckValues[index] + amount;
         }
     }
 
     [ServerRpc(RequireOwnership = false)]
     private void ResetAllLuckServerRpc()
     {
-        foreach (var eventType in Enum.GetValues(typeof(FairRandomizerEvent)).Cast<FairRandomizerEvent>())
+        for (int i = 0; i < _luckValues.Count; i++)
         {
-            if (_luckDictionary.ContainsKey(eventType))
-            {
-                _luckDictionary[eventType] = 0f;
-            }
+            _luckValues[i] = 0f;
         }
     }
 
     public override void OnDestroy()
     {
         base.OnDestroy();
-        _luckDictionary?.Dispose();
+        _luckKeys?.Dispose();
+        _luckValues?.Dispose();
     }
 }
