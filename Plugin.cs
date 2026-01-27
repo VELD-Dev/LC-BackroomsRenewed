@@ -49,6 +49,11 @@ public class Plugin : BaseUnityPlugin
         DawnLib.RegisterNetworkPrefab(defaultCellDefaultVariant);
     }
     
+    void RegisterAchievements() 
+    {
+        
+    }
+    
     private void NetcodePatch()
     {
             var types = Assembly.GetExecutingAssembly().GetTypes(); 
