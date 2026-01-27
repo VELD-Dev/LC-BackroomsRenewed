@@ -163,7 +163,7 @@ public class LocalConfig
             "Advanced",
             "Use Legacy Navmesh Generation",
             false,
-            "Use this is if you encounter issues with navmeshes (entities not behaving correctly in the backrooms)."
+            "Use this is if you encounter issues with navmeshes (entities not behaving correctly in the backrooms). Disclaimer: The legacy NavMesh generation system might freeze the game for a few seconds for the weakest configs."
         );
         
         if (LethalConfigSupport.LethalConfigLoaded)
