@@ -22,9 +22,9 @@ public class BackroomsGenerator : MonoBehaviour
         FractalTessellation
     }
     
-    public void Generate()
+    public IEnumerator Generate()
     {
-        InitializeMaze();
+        yield return InitializeMaze();
         
         currentAlgorithm = algorithm switch
         {
@@ -37,11 +37,11 @@ public class BackroomsGenerator : MonoBehaviour
             _ => throw new System.NotImplementedException()
         };
         
-        currentAlgorithm.Generate(cells, width, height);
+        yield return currentAlgorithm.Generate(cells, width, height);
         PlaceExit();
     }
     
-    private void InitializeMaze()
+    private IEnumerator InitializeMaze()
     {
         cells = new Cell[width, height];
         for (int x = 0; x < width; x++)
@@ -49,6 +49,7 @@ public class BackroomsGenerator : MonoBehaviour
             for (int y = 0; y < height; y++)
             {
                 cells[x, y] = new Cell { position = new(x, y) };
+                yield return null;
             }
         }
     }

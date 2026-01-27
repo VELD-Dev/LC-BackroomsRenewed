@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 namespace VELDDev.BackroomsRenewed.Generation.Algorithms;
 
 public class BlobAlgorithm : IMazeAlgorithm
@@ -29,11 +31,12 @@ public class BlobAlgorithm : IMazeAlgorithm
         public int BlobIdB;
     }
     
-    public void Generate(Cell[,] maze, int width, int height)
+    public IEnumerator Generate(Cell[,] maze, int width, int height)
     {
         var cellToBlob = new Dictionary<Vector2Int, Blob>();
         var blobs = new List<Blob>();
         int blobIdCounter = 0;
+        var perfSw = Stopwatch.StartNew();
         
         for (int x = 0; x < width; x++)
         {
@@ -44,6 +47,13 @@ public class BlobAlgorithm : IMazeAlgorithm
                 blob.Cells.Add(pos);
                 blobs.Add(blob);
                 cellToBlob[pos] = blob;
+                
+                // Dynamic refresh to avoid stutters (smort)
+                if (perfSw.ElapsedMilliseconds > 16)
+                {
+                    yield return null;
+                    perfSw.Restart();
+                }
             }
         }
         
@@ -53,10 +63,15 @@ public class BlobAlgorithm : IMazeAlgorithm
             for (int y = 0; y < height; y++)
             {
                 allCells.Add(new Vector2Int(x, y));
+                if (perfSw.ElapsedMilliseconds > 16)
+                {
+                    yield return null;
+                    perfSw.Restart();
+                }
             }
         }
         
-        ShuffleCells(allCells);
+        yield return ShuffleCells(allCells);
         
         while (blobs.Count > 1)
         {
@@ -90,7 +105,15 @@ public class BlobAlgorithm : IMazeAlgorithm
                 
                 blobs.Remove(blobB);
             }
+
+            if (perfSw.ElapsedMilliseconds > 16)
+            {
+                yield return null;
+                perfSw.Restart();
+            }
         }
+
+        perfSw.Stop();
     }
     
     private List<MergeCandidate> FindMergeCandidates(
@@ -140,12 +163,20 @@ public class BlobAlgorithm : IMazeAlgorithm
         return candidates;
     }
 
-    private void ShuffleCells(List<Vector2Int> cells)
+    private IEnumerator ShuffleCells(List<Vector2Int> cells)
     {
+        var perfSw = Stopwatch.StartNew();
+        
         for (int i = cells.Count - 1; i > 0; i--)
         {
             int j = Random.Range(0, i + 1);
             (cells[i], cells[j]) = (cells[j], cells[i]);
+            if (perfSw.ElapsedMilliseconds > 16)
+            {
+                yield return null;
+                perfSw.Restart();
+            }
         }
+        perfSw.Stop();
     }
 }

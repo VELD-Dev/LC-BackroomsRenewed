@@ -192,6 +192,13 @@ internal static class LethalConfigSupport
                 Max = 10,
             }
         );
+        
+        // Advanced
+
+        var legacyNavGen = new BoolCheckBoxConfigItem(
+            config.LegacyNavMeshGeneration,
+            false
+        );
 
         LethalConfigManager.AddConfigItem(streamerMode);
         LethalConfigManager.AddConfigItem(fairRandomizer);
@@ -208,5 +215,7 @@ internal static class LethalConfigSupport
         LethalConfigManager.AddConfigItem(genMinSize);
         LethalConfigManager.AddConfigItem(genMaxSize);
         LethalConfigManager.AddConfigItem(genFakeExitMax);
+        
+        LethalConfigManager.AddConfigItem(legacyNavGen);
     }
 }

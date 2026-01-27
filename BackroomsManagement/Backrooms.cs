@@ -1,6 +1,8 @@
+using System.Diagnostics;
 using GameNetcodeStuff;
 using Unity.AI.Navigation;
 using UnityEngine.AI;
+using Logger = UnityEngine.Logger;
 
 namespace VELDDev.BackroomsRenewed.BackroomsManagement;
 
@@ -29,6 +31,8 @@ public class Backrooms : NetworkBehaviour
     private readonly HashSet<CellVariantInfo> _requiredVariantsNotYetSpawned = [];
     private float _timeSinceLastTwinkleCheck = 0f;
     private float _nextTwinkleCheckTime = 0f;
+    
+    private ManualLogSource Logger => Plugin.Instance.logger;
 
     void Awake()
     {
@@ -46,7 +50,7 @@ public class Backrooms : NetworkBehaviour
         generator.height = size;
         if(IsServer)
         {
-            GenerateBackrooms();
+            StartCoroutine(GenerateBackrooms());
         }
     }
 
@@ -54,7 +58,7 @@ public class Backrooms : NetworkBehaviour
     {
         if (themes == null || themes.Count == 0)
         {
-            Plugin.Instance.logger.LogError("No themes configured! Cannot generate backrooms.");
+            Logger.LogError("No themes configured! Cannot generate backrooms.");
             return;
         }
 
@@ -62,7 +66,7 @@ public class Backrooms : NetworkBehaviour
         if (themes.Count == 1)
         {
             CurrentTheme = themes[0];
-            Plugin.Instance.logger.LogInfo($"Theme selected: {CurrentTheme.themeName}");
+            Logger.LogInfo($"Theme selected: {CurrentTheme.themeName}");
             return;
         }
 
@@ -77,14 +81,14 @@ public class Backrooms : NetworkBehaviour
             if (randomValue <= cumulativeWeight)
             {
                 CurrentTheme = theme;
-                Plugin.Instance.logger.LogInfo($"Theme selected: {CurrentTheme.themeName}");
+                Logger.LogInfo($"Theme selected: {CurrentTheme.themeName}");
                 return;
             }
         }
 
         // Fallback
         CurrentTheme = themes[^1];
-        Plugin.Instance.logger.LogInfo($"Theme selected: {CurrentTheme.themeName}");
+        Logger.LogInfo($"Theme selected: {CurrentTheme.themeName}");
     }
 
     void FixedUpdate()
@@ -122,7 +126,7 @@ public class Backrooms : NetworkBehaviour
 
             if (!randomPos.HasValue)
             {
-                Plugin.Instance.logger.LogWarning("Failed to find valid NavMesh position, using fallback center position");
+                Logger.LogWarning("Failed to find valid NavMesh position, using fallback center position");
             }
 
             TeleportPlayerClientRpc(targetPlayer.playerClientId, targetPos, dropItems);
@@ -154,7 +158,7 @@ public class Backrooms : NetworkBehaviour
 
         if (!randomPos.HasValue)
         {
-            Plugin.Instance.logger.LogWarning("Failed to find valid NavMesh position, using fallback center position");
+            Logger.LogWarning("Failed to find valid NavMesh position, using fallback center position");
         }
 
         TeleportPlayerClientRpc(playerClientId, targetPos, dropItems);
@@ -169,7 +173,7 @@ public class Backrooms : NetworkBehaviour
         var targetPlayer = GetPlayerByClientId(playerClientId);
         if (targetPlayer == null)
         {
-            Plugin.Instance.logger.LogWarning($"TeleportPlayerClientRpc: Could not find player with clientId {playerClientId}");
+            Logger.LogWarning($"TeleportPlayerClientRpc: Could not find player with clientId {playerClientId}");
             return;
         }
 
@@ -231,15 +235,15 @@ public class Backrooms : NetworkBehaviour
         return null;
     }
     
-    private void GenerateBackrooms()
+    private IEnumerator GenerateBackrooms()
     {
         if(!NetworkManager.Singleton.IsHost && !IsServer)
-            return;
+            yield break;
 
         // Select theme for this generation
         SelectTheme();
         if (CurrentTheme == null)
-            return;
+            yield break;
 
         // Reset usage counter and required variants tracking for new generation
         _variantUsageCount.Clear();
@@ -253,18 +257,28 @@ public class Backrooms : NetworkBehaviour
             }
         }
 
-        generator.Generate();
+        yield return generator.Generate();
         Cells = new CellBehaviour[generator.width, generator.height];
+        
+        // Set navmesh location and size
+        /*
+        var backroomsCenter = new Vector3((generator.width * CELL_SIZE) / 2f, 0, (generator.height * CELL_SIZE) / 2f);
+        BackroomsNavMesh.center = backroomsCenter;
+        BackroomsNavMesh.size = new Vector3(generator.width * CELL_SIZE, 1f, generator.height * CELL_SIZE);
+        BackroomsNavMesh.navMeshData = new NavMeshData();
+        BackroomsNavMesh.AddData();
+        */
 
-
-        // Instatiate cells for all clients, should make a rectangle.
+        var sw = Stopwatch.StartNew();
+        // Instantiate cells for all clients, should make a rectangle.
         for(int x = 0; x < generator.width; x++)
         {
             for(int y = 0; y < generator.height; y++)
             {
                 var cell = generator.cells[x, y];
                 var selectedVariant = GetWeightedRandomVariant();
-                var cellgo = Instantiate(selectedVariant.variantPrefab, new Vector3(x * CELL_SIZE, -1000, y * CELL_SIZE), Quaternion.identity);
+                var cellgo = Instantiate(selectedVariant.variantPrefab, CellsHolder);
+                cellgo.transform.localPosition = new Vector3(CELL_SIZE * x, 0, CELL_SIZE * y);
                 cellgo.GetComponent<NetworkObject>().Spawn(true);
                 var cellmono = cellgo.GetComponent<CellBehaviour>();
 
@@ -332,8 +346,27 @@ public class Backrooms : NetworkBehaviour
                     cellmono.InitializeClientRpc(cell, false, false);
                 }
                 Cells[x, y] = cellmono;
+                
+                // Update navmesh periodically
+                /*
+                if (!SyncedConfig.Instance.LegacyNavMeshGen && y % 5 == 0)
+                {
+                    sw.Restart();
+                    yield return BackroomsNavMesh.UpdateNavMesh(BackroomsNavMesh.navMeshData);
+                    sw.Stop();
+                    Logger.LogInfo($"Navmesh refreshed in {sw.ElapsedMilliseconds:N3}ms");
+                }
+                */
+                if (sw.ElapsedMilliseconds > 16)
+                {
+                    yield return null;
+                    sw.Restart();
+                }
             }
         }
+
+        // Final update in case the generation of 
+        // yield return BackroomsNavMesh.UpdateNavMesh(BackroomsNavMesh.navMeshData);
         
         SetupBackroomsClientRpc(generator.width, generator.height);
     }
@@ -342,17 +375,38 @@ public class Backrooms : NetworkBehaviour
     private void SetupBackroomsClientRpc(int width, int length)
     {
         // Set anti-light leak cover location and size
-        var backroomsCenter = new Vector3((width * CELL_SIZE) / 2f, -995f, (length * CELL_SIZE) / 2f);
-        BackroomsLightCover.transform.position = backroomsCenter;
+        var backroomsCenter = new Vector3((width * CELL_SIZE) / 2f, 5f, (length * CELL_SIZE) / 2f);
+        BackroomsLightCover.transform.localPosition = backroomsCenter;
         BackroomsLightCover.transform.localScale = new Vector3(width * CELL_SIZE, 1f, length * CELL_SIZE) * 1.1f;
         
-        // Set navmesh location and size
-        BackroomsNavMesh.center = backroomsCenter + new Vector3(0, -5f, 0);
-        BackroomsNavMesh.size = new Vector3(width * CELL_SIZE, 1f, length * CELL_SIZE);
         // Navmesh may be baked in the future by making one navmesh surface for each cell
         // and adding navmesh links between cells
-        BackroomsNavMesh.BuildNavMesh();
+        if (SyncedConfig.Instance.LegacyNavMeshGen)
+        {
+            var sw = Stopwatch.StartNew();
+            BackroomsNavMesh.BuildNavMesh();
+            sw.Stop();
+            Logger.LogInfo($"Built navmesh in {sw.ElapsedMilliseconds:N3}ms");
+        }
+        else
+        {
+            Logger.LogInfo("Refreshing Navmesh...");
+            var sw = Stopwatch.StartNew();
+            StartCoroutine(RefreshNavmeshesAsync());
+            sw.Stop();
+            Logger.LogInfo($"Navmesh refreshed in {sw.ElapsedMilliseconds:N3}ms");
+        }
         // More research to be done for this smh
+    }
+
+    private IEnumerator RefreshNavmeshesAsync()
+    {
+        var backroomsCenter = new Vector3((generator.width * CELL_SIZE) / 2f, 0, (generator.height * CELL_SIZE) / 2f);
+        BackroomsNavMesh.center = backroomsCenter;
+        BackroomsNavMesh.size = new Vector3(generator.width * CELL_SIZE, 1f, generator.height * CELL_SIZE);
+        BackroomsNavMesh.navMeshData = new NavMeshData();
+        BackroomsNavMesh.AddData();
+        yield return BackroomsNavMesh.UpdateNavMesh(BackroomsNavMesh.navMeshData);
     }
     
     public override void OnDestroy()

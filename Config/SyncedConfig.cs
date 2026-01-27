@@ -19,8 +19,9 @@ public class SyncedConfig : Synchronizable<SyncedConfig>
     public float TeleportationOddsOnShipTP;
     public float TeleportationOddsOnShipRevTP;
     public bool DropHeldItemsOnTeleport;
+    public bool LegacyNavMeshGen;
 
-    [NonSerialized] public LocalConfig config;
+    [NonSerialized] private LocalConfig config;
 
     public SyncedConfig(LocalConfig cfg)
     {
@@ -42,6 +43,7 @@ public class SyncedConfig : Synchronizable<SyncedConfig>
         config.TeleportationOddsOnShipTeleport.SettingChanged += (v, _) => TeleportationOddsOnShipTP = (float)v;
         config.TeleportationOddsOnShipTeleport.SettingChanged += (v, _) => TeleportationOddsOnShipRevTP = (float)v;
         config.DropHeldItemsOnTeleport.SettingChanged += (v, _) => DropHeldItemsOnTeleport = (bool)v;
+        config.LegacyNavMeshGeneration.SettingChanged += (v, _) => LegacyNavMeshGen = (bool)v;
 
         // Force synchronization when host changes settings.
         cfg.CfgFile.SettingChanged += (_, __) => BroadcastSync();
@@ -60,6 +62,7 @@ public class SyncedConfig : Synchronizable<SyncedConfig>
         TeleportationOddsOnShipTP = config.TeleportationOddsOnShipTeleport.Value;
         TeleportationOddsOnShipRevTP = config.TeleportationOddsOnShipRevertTeleport.Value;
         DropHeldItemsOnTeleport = config.DropHeldItemsOnTeleport.Value;
+        LegacyNavMeshGen = config.LegacyNavMeshGeneration.Value;
     }
 
     public static void BroadcastSync()

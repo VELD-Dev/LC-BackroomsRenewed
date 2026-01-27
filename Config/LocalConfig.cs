@@ -27,6 +27,7 @@ public class LocalConfig
     public readonly ConfigEntry<int> MinBackroomsSize;
     public readonly ConfigEntry<int> MaxBackroomsSize;
     public readonly ConfigEntry<int> MaxFakeExitCount;
+    public readonly ConfigEntry<bool> LegacyNavMeshGeneration;
 
     internal ConfigFile CfgFile;
     
@@ -156,6 +157,15 @@ public class LocalConfig
             "The maximum number of fake exits that will appear in the Backrooms. They do not kill, just TP to somewhere else in the backrooms."
         );
 
+        // Advanced
+
+        LegacyNavMeshGeneration = cfg.Bind(
+            "Advanced",
+            "Use Legacy Navmesh Generation",
+            false,
+            "Use this is if you encounter issues with navmeshes (entities not behaving correctly in the backrooms)."
+        );
+        
         if (LethalConfigSupport.LethalConfigLoaded)
         {
             LethalConfigSupport.RegisterLethalConfig(this);
