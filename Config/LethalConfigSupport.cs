@@ -87,8 +87,27 @@ internal static class LethalConfigSupport
                 RequiresRestart = false,
                 CanModifyCallback = NetworkAllowModifyCb
             });
+        var tpOnShipTeleport = new BoolCheckBoxConfigItem(
+            config.TeleportOnShipTeleport,
+            new BoolCheckBoxOptions
+            {
+                Name = "Teleport on Ship TP",
+                Description = "Allows teleportation when being teleported with the Ship Teleporter. See also 'Teleportation Odds on Ship TP'.",
+                Section = "Teleportation",
+                RequiresRestart = false,
+                CanModifyCallback = NetworkAllowModifyCb
+            });
+        var tpOnShipRevTeleport = new BoolCheckBoxConfigItem(
+            config.TeleportOnShipRevertTeleport,
+            new BoolCheckBoxOptions
+            {
+                Name = "Teleport on Ship Revert TP",
+                Description = "Allows teleportation when being reverse teleported with the ship reverse TP. See also 'Teleportation Odds on Ship Rev TP'.",
+                RequiresRestart = false,
+                CanModifyCallback = NetworkAllowModifyCb
+            });
 
-
+        
         var tpOddsOnDeath = new FloatSliderConfigItem(
             config.TeleportationOddsOnDeath,
             new FloatSliderOptions
@@ -130,13 +149,39 @@ internal static class LethalConfigSupport
             new FloatSliderOptions
             {
                 Name = "Teleportation Odds on Entrance/Exit",
-                Description = "The chance percentage of teleportation ocurring on entering/exiting the Facility.",
+                Section = "Teleportation",
+                Description = "The chance percentage of teleportation occurring on entering/exiting the Facility.",
                 Min = 0f,
                 Max = 100f,
                 RequiresRestart = false,
                 CanModifyCallback = () => config.TeleportOnInteractDoor.Value && NetworkAllowModifyCb()
             });
-
+        var tpOddsOnShipTp = new FloatSliderConfigItem(
+            config.TeleportationOddsOnShipTeleport,
+            new FloatSliderOptions
+            {
+                Name = "Teleportation Odds on Ship TP",
+                Section = "Teleportation",
+                Description = "The chance percentage of teleportation occurring when being teleported with ship TP",
+                Min = 0f,
+                Max = 100f,
+                RequiresRestart = false,
+                CanModifyCallback = () => config.TeleportOnShipTeleport.Value && NetworkAllowModifyCb()
+            });
+        var tpOddsOnShipRevTp = new FloatSliderConfigItem(
+            config.TeleportationOddsOnShipRevertTeleport,
+            new FloatSliderOptions
+            {
+                Name = "Teleportation Odds on Ship Revert TP",
+                Section = "Teleportation",
+                Description =
+                    "The chance percentage of teleportation occurring when being reverse-teleported with ship reverse TP",
+                Min = 0f,
+                Max = 100f,
+                RequiresRestart = false,
+                CanModifyCallback = () => config.TeleportOnShipRevertTeleport.Value && NetworkAllowModifyCb()
+            });
+        
         var dropItemsOnTp = new BoolCheckBoxConfigItem(
             config.DropHeldItemsOnTeleport,
             new BoolCheckBoxOptions()
@@ -157,7 +202,6 @@ internal static class LethalConfigSupport
                 Section = "Generation",
                 RequiresRestart = true,
             });
-
         var genMinSize = new IntSliderConfigItem(
             config.MinBackroomsSize,
             new IntSliderOptions
@@ -210,6 +254,12 @@ internal static class LethalConfigSupport
         LethalConfigManager.AddConfigItem(tpOddsOnClipping);
         LethalConfigManager.AddConfigItem(tpOnDamage);
         LethalConfigManager.AddConfigItem(tpOddsOnDamage);
+        LethalConfigManager.AddConfigItem(tpOnDoorInteract);
+        LethalConfigManager.AddConfigItem(tpOddsOnDoorInteract);
+        LethalConfigManager.AddConfigItem(tpOnShipTeleport);
+        LethalConfigManager.AddConfigItem(tpOddsOnShipTp);
+        LethalConfigManager.AddConfigItem(tpOnShipRevTeleport);
+        LethalConfigManager.AddConfigItem(tpOddsOnShipRevTp);
 
         LethalConfigManager.AddConfigItem(genAlgorithm);
         LethalConfigManager.AddConfigItem(genMinSize);

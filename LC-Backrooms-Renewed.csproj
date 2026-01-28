@@ -11,7 +11,7 @@
 
   <ItemGroup>
     <PackageReference Include="LethalCompany.GameLibs.Steam" Version="73.0.0-ngd.0" />
-    <PackageReference Include="HarmonyX" Version="2.13.0" />
+    <PackageReference Include="HarmonyX" Version="2.9.0" />
     <PackageReference Include="BepInEx.Core" Version="5.4.21" />
     <PackageReference Include="BepInEx.PluginInfoProps" Version="2.1.0" />
     <PackageReference Include="TeamXiaolan.DawnLib" Version="0.7.*" />

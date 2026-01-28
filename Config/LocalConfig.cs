@@ -81,7 +81,7 @@ public class LocalConfig
             "Enable teleportation when using Ship Teleporter"
         );
         TeleportOnShipRevertTeleport = cfg.Bind(
-            "Teleport",
+            "Teleportation",
             "Teleport on Ship Revert TP",
             true,
             "Enable teleportation when using the Ship Revert Teleporter"
