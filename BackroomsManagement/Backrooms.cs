@@ -368,7 +368,7 @@ public class Backrooms : NetworkBehaviour
 
         sw.Stop();
         globalSw.Stop();
-        Logger.LogInfo($"Generated backrooms in {globalSw.ElapsedMillisecondsN3}ms")
+        Logger.LogInfo($"Generated backrooms in {globalSw.ElapsedMilliseconds:N3}ms");
 
         // Final update in case the generation of 
         // yield return BackroomsNavMesh.UpdateNavMesh(BackroomsNavMesh.navMeshData);
