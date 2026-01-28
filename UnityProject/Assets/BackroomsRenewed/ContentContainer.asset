@@ -12,4 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: -1097792660, guid: 7b498aef2f33e69c2a88e5e7065423a3, type: 3}
   m_Name: ContentContainer
   m_EditorClassIdentifier: 
-  assetBundles: []
+  assetBundles:
+  - assetBundleName: backroomsrenewed_assets
+    configName: 
+  - assetBundleName: backroomsrenewed_achievements
+    configName: 
