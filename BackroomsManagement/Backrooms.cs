@@ -270,6 +270,7 @@ public class Backrooms : NetworkBehaviour
         */
 
         var sw = Stopwatch.StartNew();
+        var globalSw = Stopwatch.StartNew();
         // Instantiate cells for all clients, should make a rectangle.
         for(int x = 0; x < generator.width; x++)
         {
@@ -364,6 +365,10 @@ public class Backrooms : NetworkBehaviour
                 }
             }
         }
+
+        sw.Stop();
+        globalSw.Stop();
+        Logger.LogInfo($"Generated backrooms in {globalSw.ElapsedMillisecondsN3}ms")
 
         // Final update in case the generation of 
         // yield return BackroomsNavMesh.UpdateNavMesh(BackroomsNavMesh.navMeshData);
