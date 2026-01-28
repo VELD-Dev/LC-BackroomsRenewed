@@ -242,8 +242,11 @@ public class Backrooms : NetworkBehaviour
 
         // Select theme for this generation
         SelectTheme();
-        if (CurrentTheme == null)
+        if (!CurrentTheme)
+        {
+            Logger.LogError($"Couldn't generate the backrooms: Selected theme is null !");
             yield break;
+        }
 
         // Reset usage counter and required variants tracking for new generation
         _variantUsageCount.Clear();
@@ -257,6 +260,7 @@ public class Backrooms : NetworkBehaviour
             }
         }
 
+        Logger.LogInfo("Starting generation...");
         yield return generator.Generate();
         Cells = new CellBehaviour[generator.width, generator.height];
         
@@ -269,6 +273,7 @@ public class Backrooms : NetworkBehaviour
         BackroomsNavMesh.AddData();
         */
 
+        Logger.LogInfo("Placing the cells in the world...");
         var sw = Stopwatch.StartNew();
         var globalSw = Stopwatch.StartNew();
         // Instantiate cells for all clients, should make a rectangle.
@@ -360,6 +365,7 @@ public class Backrooms : NetworkBehaviour
                 */
                 if (sw.ElapsedMilliseconds > 16)
                 {
+                    Logger.LogDebug($"Yielding frame; {sw.ElapsedMilliseconds:N0}ms elapsed since last frame.");
                     yield return null;
                     sw.Restart();
                 }

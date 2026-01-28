@@ -118,7 +118,7 @@ GameObject:
   - component: {fileID: 954048839654378624}
   - component: {fileID: 775751896665622398}
   m_Layer: 0
-  m_Name: WallNorth
+  m_Name: WallEast
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -441,7 +441,7 @@ GameObject:
   - component: {fileID: 5723611816498804130}
   - component: {fileID: 1287111614955266966}
   m_Layer: 0
-  m_Name: WallEast
+  m_Name: WallSouth
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -547,7 +547,7 @@ GameObject:
   - component: {fileID: 2683080788444746923}
   - component: {fileID: 2160518435010164334}
   m_Layer: 0
-  m_Name: WallSouth
+  m_Name: WallWest
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -653,7 +653,7 @@ GameObject:
   - component: {fileID: 1654555392029976095}
   - component: {fileID: 2791907229912752517}
   m_Layer: 0
-  m_Name: WallWest
+  m_Name: WallNorth
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -883,10 +883,10 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 1225461391988345332}
   - {fileID: 6448304376858399649}
   - {fileID: 1449850717223753462}
   - {fileID: 6587176747333374062}
-  - {fileID: 1225461391988345332}
   - {fileID: 188458374713619904}
   - {fileID: 4569480063731202722}
   - {fileID: 989233343979770277}
@@ -904,10 +904,10 @@ MonoBehaviour:
   m_Script: {fileID: 1619084295, guid: f46d54e507601254ca64f43152c708de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  NorthWall: {fileID: 3502590491447789785}
-  EastWall: {fileID: 6730631439835642695}
-  SouthWall: {fileID: 8229287230617109443}
-  WestWall: {fileID: 8272517353241595534}
+  NorthWall: {fileID: 8272517353241595534}
+  EastWall: {fileID: 3502590491447789785}
+  SouthWall: {fileID: 6730631439835642695}
+  WestWall: {fileID: 8229287230617109443}
   LightObject: {fileID: 4693946014766776661}
   cellLightSource: {fileID: 6043281878012624286}
   hasLightSource: 0

@@ -1,4 +1,6 @@
-﻿namespace VELDDev.BackroomsRenewed;
+﻿using Dusk;
+
+namespace VELDDev.BackroomsRenewed;
 
 [BepInPlugin(PluginInfo.GUID, PluginInfo.PluginName, PluginInfo.Version)]
 public class Plugin : BaseUnityPlugin
@@ -10,8 +12,11 @@ public class Plugin : BaseUnityPlugin
     internal AssetBundle assetBundle;
     internal GameObject BackroomsPrefab;
     internal LocalConfig Configs;
-    
     internal readonly string PluginDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+    internal DuskMod mod;
+    
+    public class AchievementAssets(DuskMod mod, string filePath) : AssetBundleLoader<AchievementAssets>(mod, filePath) {}
+    internal AchievementAssets achievements;
 
     void Awake()
     {
@@ -33,9 +38,12 @@ public class Plugin : BaseUnityPlugin
         logger.LogInfo(""">>> [x] C#NF#G L##D#D""");
 
         // I understood the lesson, Thunderstore, no more embedded assets !
-        assetBundle = AssetBundle.LoadFromFile(Path.Combine(PluginDir, "backroomsrenewed.assets"));
+        assetBundle = AssetBundle.LoadFromFile(Path.Combine(PluginDir, "backroomsrenewed_assets"));
+        var tocAssetBundle = AssetBundle.LoadFromFile(Path.Combine(PluginDir, "backroomsrenewed_toc"));
         RegisterPrefabs();
+        mod = DuskMod.RegisterMod(this, tocAssetBundle);
         logger.LogInfo(""">>> [x] #SS#T B#NDL# L##D#D; #SS#TS L##D#D""");
+        RegisterAchievements();
         logger.LogInfo("""\\\ /!\ #RR#R: #NT#GR#T# CH#CK F##L#R# -- PR#C##D C#R#F#LL# /!\ ///""");
         logger.LogInfo(""">>> Entering the b--#c__ro#^m:s~""");
     }
@@ -49,9 +57,10 @@ public class Plugin : BaseUnityPlugin
         DawnLib.RegisterNetworkPrefab(defaultCellDefaultVariant);
     }
     
-    void RegisterAchievements() 
+    void RegisterAchievements()
     {
-        
+        achievements = new AchievementAssets(mod, "backroomsrenewed_achievements");
+        mod.RegisterContentHandlers();
     }
     
     private void NetcodePatch()
