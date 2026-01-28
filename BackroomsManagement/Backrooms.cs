@@ -368,7 +368,7 @@ public class Backrooms : NetworkBehaviour
 
         sw.Stop();
         globalSw.Stop();
-        Logger.LogInfo($"Generated backrooms in {globalSw.ElapsedMilliseconds:N3}ms");
+        Logger.LogInfo($"Generated backrooms in {globalSw.ElapsedMilliseconds:N0}ms");
 
         // Final update in case the generation of 
         // yield return BackroomsNavMesh.UpdateNavMesh(BackroomsNavMesh.navMeshData);
@@ -391,7 +391,7 @@ public class Backrooms : NetworkBehaviour
             var sw = Stopwatch.StartNew();
             BackroomsNavMesh.BuildNavMesh();
             sw.Stop();
-            Logger.LogInfo($"Built navmesh in {sw.ElapsedMilliseconds:N3}ms");
+            Logger.LogInfo($"Built navmesh in {sw.ElapsedMilliseconds:N0}ms");
         }
         else
         {
@@ -399,7 +399,7 @@ public class Backrooms : NetworkBehaviour
             var sw = Stopwatch.StartNew();
             StartCoroutine(RefreshNavmeshesAsync());
             sw.Stop();
-            Logger.LogInfo($"Navmesh refreshed in {sw.ElapsedMilliseconds:N3}ms");
+            Logger.LogInfo($"Navmesh refreshed in {sw.ElapsedMilliseconds:N0}ms");
         }
         // More research to be done for this smh
     }
