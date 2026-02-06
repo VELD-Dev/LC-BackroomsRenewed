@@ -8,7 +8,7 @@ namespace VELDDev.BackroomsRenewed.BackroomsManagement;
 
 public class Backrooms : NetworkBehaviour
 {
-    const float CELL_SIZE = 8f; // may be modified depending on how big I make the cells in blender
+    const float CELL_SIZE = 16f; // may be modified depending on how big I make the cells in blender
 
     public static Backrooms Instance;
 
@@ -353,8 +353,6 @@ public class Backrooms : NetworkBehaviour
                 }
                 Cells[x, y] = cellmono;
                 
-                // Update navmesh periodically
-                /*
                 if (!SyncedConfig.Instance.LegacyNavMeshGen && y % 5 == 0)
                 {
                     sw.Restart();
@@ -362,7 +360,7 @@ public class Backrooms : NetworkBehaviour
                     sw.Stop();
                     Logger.LogInfo($"Navmesh refreshed in {sw.ElapsedMilliseconds:N3}ms");
                 }
-                */
+                
                 if (sw.ElapsedMilliseconds > 16)
                 {
                     Logger.LogDebug($"Yielding frame; {sw.ElapsedMilliseconds:N0}ms elapsed since last frame.");
@@ -386,9 +384,9 @@ public class Backrooms : NetworkBehaviour
     private void SetupBackroomsClientRpc(int width, int length)
     {
         // Set anti-light leak cover location and size
-        var backroomsCenter = new Vector3((width * CELL_SIZE) / 2f, 5f, (length * CELL_SIZE) / 2f);
+        var backroomsCenter = new Vector3((width * CELL_SIZE) / 2f, 10f, (length * CELL_SIZE) / 2f);
         BackroomsLightCover.transform.localPosition = backroomsCenter;
-        BackroomsLightCover.transform.localScale = new Vector3(width * CELL_SIZE, 1f, length * CELL_SIZE) * 1.1f;
+        BackroomsLightCover.transform.localScale = new Vector3(width, 1f, length) * 1.1f;
         
         // Navmesh may be baked in the future by making one navmesh surface for each cell
         // and adding navmesh links between cells
