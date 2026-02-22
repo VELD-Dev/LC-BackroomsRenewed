@@ -1,10 +1,10 @@
 namespace VELDDev.BackroomsRenewed.Patches;
 
 [HarmonyPatch(typeof(RoundManager))]
-public class RoundManager_Patches
+public static class RoundManager_Patches
 {
     [HarmonyPostfix, HarmonyPatch(nameof(RoundManager.DespawnPropsAtEndOfRound))]
-    public static void DespawnBackroomsAt(RoundManager __instance)
+    public static void DespawnBackroomsAtEndOfRound(RoundManager __instance)
     {
         if (!__instance.IsServer)
             return;
@@ -27,7 +27,7 @@ public class RoundManager_Patches
             Backrooms.Instance = null;
         }
 
-        var backroomsGo = GameObject.Instantiate(Plugin.Instance.BackroomsPrefab, new Vector3(0, -100, 0), Quaternion.identity);
+        var backroomsGo = GameObject.Instantiate(Plugin.Instance.BackroomsPrefab, new Vector3(5000, -450, 0), Quaternion.identity);
         backroomsGo.GetComponent<NetworkObject>().Spawn(true);
         
     }

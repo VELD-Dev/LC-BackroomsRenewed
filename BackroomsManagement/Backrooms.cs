@@ -353,6 +353,7 @@ public class Backrooms : NetworkBehaviour
                 }
                 Cells[x, y] = cellmono;
                 
+                /*
                 if (!SyncedConfig.Instance.LegacyNavMeshGen && y % 5 == 0)
                 {
                     sw.Restart();
@@ -360,6 +361,7 @@ public class Backrooms : NetworkBehaviour
                     sw.Stop();
                     Logger.LogInfo($"Navmesh refreshed in {sw.ElapsedMilliseconds:N3}ms");
                 }
+                */
                 
                 if (sw.ElapsedMilliseconds > 16)
                 {

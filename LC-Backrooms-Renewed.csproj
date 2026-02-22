@@ -6,7 +6,7 @@
     <LangVersion>preview</LangVersion>
     <Nullable>enable</Nullable>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <DefaultItemExcludes>$(DefaultItemExcludes);deps/**;UnityProject/**</DefaultItemExcludes>
+    <DefaultItemExcludes>$(DefaultItemExcludes);deps/**;UnityProject/**;LethalCompanyUnityProject/**</DefaultItemExcludes>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,8 +14,8 @@
     <PackageReference Include="HarmonyX" Version="2.9.0" />
     <PackageReference Include="BepInEx.Core" Version="5.4.21" />
     <PackageReference Include="BepInEx.PluginInfoProps" Version="2.1.0" />
-    <PackageReference Include="TeamXiaolan.DawnLib" Version="0.7.*" />
-    <PackageReference Include="TeamXiaolan.DawnLib.DuskMod" Version="0.7.*" />
+    <PackageReference Include="TeamXiaolan.DawnLib" Version="0.8.5" />
+    <PackageReference Include="TeamXiaolan.DawnLib.DuskMod" Version="0.8.5" />
   </ItemGroup>
 
   <ItemGroup>
@@ -37,12 +37,12 @@
   </ItemGroup>
 
   <Target Name="NetcodePatch" AfterTargets="PostBuildEvent">
-    <Exec Command="netcode-patch -uv 2022.3.62 -nv 1.12.0 -tv 1.0.0 &quot;$(TargetPath)&quot; @(ReferencePathWithRefAssemblies->'&quot;%(Identity)&quot;', ' ')"/>
+    <Exec Command="netcode-patch -uv 2022.3.62 -nv 1.12.0 -tv 1.0.0 &quot;$(TargetPath)&quot; @(ReferencePathWithRefAssemblies->'&quot;%(Identity)&quot;', ' ')" />
   </Target>
   
   <Target Name="PostBuild" AfterTargets="PostBuildBuild">
-    <Copy SourceFiles="$(ProjectDir)/README.md;$(ProjectDir)/LICENSE" DestinationFolder="$(ProjectDir)/bin/$(Configuration)/" SkipUnchangedFiles="true"/>
-    <Copy SourceFiles="$(ProjectDir)/Assets/*" DestinationFolder="($ProjectDir)/bin/$(Configuration)/" SkipUnchangedFiles="true"/>
+    <Copy SourceFiles="$(ProjectDir)/README.md;$(ProjectDir)/LICENSE" DestinationFolder="$(ProjectDir)/bin/$(Configuration)/" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="$(ProjectDir)/Assets/*" DestinationFolder="($ProjectDir)/bin/$(Configuration)/" SkipUnchangedFiles="true" />
   </Target>
 
 </Project>

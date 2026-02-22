@@ -22,10 +22,13 @@ public class CellBehaviour : NetworkBehaviour {
         UpdateWalls();
         if(!hasLightSource)
         {
+            Plugin.Instance.logger.LogWarning($"Cell {cell.position} initialized with light source disabled.");
             LightObject.SetActive(false);
         }
         else
         {
+            Plugin.Instance.logger.LogDebug($"Cell {cell.position} initialized with light source enabled.");
+            LightObject.SetActive(true);
             cellLightSource.enabled = true;
             cellLightSource.intensity = defaultLightState ? 1f : 0f;
         }
