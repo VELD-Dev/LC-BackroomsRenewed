@@ -53,6 +53,7 @@ public class Backrooms : NetworkBehaviour
         var size = Random.Range(LocalConfig.Singleton.MinBackroomsSize.Value, LocalConfig.Singleton.MaxBackroomsSize.Value + 1);
         generator.width = size;
         generator.height = size;
+        generator.exitCount = LocalConfig.Singleton.ExitCount.Value;
         if(IsServer)
         {
             StartCoroutine(GenerateBackrooms());
@@ -349,6 +350,16 @@ public class Backrooms : NetworkBehaviour
                     }
                 }
 
+                // Re-open exit walls that border logic may have just closed
+                foreach (var exit in generator.exitPositions)
+                {
+                    if (exit.position.x == x && exit.position.y == y)
+                    {
+                        cell.walls &= ~exit.direction;
+                        break;
+                    }
+                }
+
                 const int LIGHT_GO_CHANCE_PERCENT = 30;
                 const int LIGHT_ON_CHANCE_PERCENT = 60;
                 var putLightFlag = Random.Range(0, 101) < LIGHT_GO_CHANCE_PERCENT;
@@ -386,9 +397,24 @@ public class Backrooms : NetworkBehaviour
         globalSw.Stop();
         Logger.LogInfo($"Generated backrooms in {globalSw.ElapsedMilliseconds:N0}ms");
 
-        // Final update in case the generation of 
+        Logger.LogInfo($"Spawning {generator.exitPositions.Count} exit door(s)...");
+        foreach (var exit in generator.exitPositions)
+        {
+            var cellBehaviour = Cells[exit.position.x, exit.position.y];
+            var socket = cellBehaviour.GetExitDoorSocket(exit.direction);
+            if (socket == null)
+            {
+                Logger.LogWarning($"No exit socket found for cell {exit.position} facing {exit.direction}, skipping.");
+                continue;
+            }
+            var exitGo = Instantiate(CurrentTheme.ExitPrefab, socket.position, socket.rotation);
+            exitGo.GetComponent<NetworkObject>().Spawn(true);
+            Logger.LogDebug($"Spawned exit door at cell {exit.position} facing {exit.direction}");
+        }
+
+        // Final update in case the generation of
         // yield return BackroomsNavMesh.UpdateNavMesh(BackroomsNavMesh.navMeshData);
-        
+
         SetupBackroomsClientRpc(generator.width, generator.height);
     }
 

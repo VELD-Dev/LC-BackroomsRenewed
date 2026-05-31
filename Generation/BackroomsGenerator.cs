@@ -4,12 +4,19 @@ namespace VELDDev.BackroomsRenewed.Generation;
 
 public class BackroomsGenerator : MonoBehaviour
 {
+    public struct ExitInfo
+    {
+        public Vector2Int position;
+        public WallFlags direction;
+    }
+
     public int width = 20;
     public int height = 20;
+    public int exitCount = 1;
     public MazeAlgorithm algorithm = LocalConfig.Singleton.GenerationAlgorithm.Value;
-    public Vector2Int exitPosition;
-    
+
     [HideInInspector] public Cell[,] cells = new Cell[0, 0];
+    [HideInInspector] public List<ExitInfo> exitPositions = new();
     private IMazeAlgorithm currentAlgorithm;
     
     public enum MazeAlgorithm
@@ -38,7 +45,7 @@ public class BackroomsGenerator : MonoBehaviour
         };
         
         yield return currentAlgorithm.Generate(cells, width, height);
-        PlaceExit();
+        PlaceExits();
     }
     
     private IEnumerator InitializeMaze()
@@ -54,27 +61,43 @@ public class BackroomsGenerator : MonoBehaviour
         }
     }
     
-    private void PlaceExit()
+    private void PlaceExits()
     {
-        int side = Random.Range(0, 4);
-        switch (side)
+        exitPositions.Clear();
+        var usedPositions = new HashSet<Vector2Int>();
+        int maxAttempts = exitCount * 20;
+
+        for (int attempts = 0; exitPositions.Count < exitCount && attempts < maxAttempts; attempts++)
         {
-            case 0:
-                exitPosition = new Vector2Int(Random.Range(0, width), height - 1);
-                cells[exitPosition.x, exitPosition.y].walls &= ~WallFlags.North;
-                break;
-            case 1:
-                exitPosition = new Vector2Int(width - 1, Random.Range(0, height));
-                cells[exitPosition.x, exitPosition.y].walls &= ~WallFlags.East;
-                break;
-            case 2:
-                exitPosition = new Vector2Int(Random.Range(0, width), 0);
-                cells[exitPosition.x, exitPosition.y].walls &= ~WallFlags.South;
-                break;
-            case 3:
-                exitPosition = new Vector2Int(0, Random.Range(0, height));
-                cells[exitPosition.x, exitPosition.y].walls &= ~WallFlags.West;
-                break;
+            int side = Random.Range(0, 4);
+            Vector2Int pos;
+            WallFlags dir;
+
+            switch (side)
+            {
+                case 0:
+                    pos = new Vector2Int(Random.Range(0, width), height - 1);
+                    dir = WallFlags.North;
+                    break;
+                case 1:
+                    pos = new Vector2Int(width - 1, Random.Range(0, height));
+                    dir = WallFlags.East;
+                    break;
+                case 2:
+                    pos = new Vector2Int(Random.Range(0, width), 0);
+                    dir = WallFlags.South;
+                    break;
+                default:
+                    pos = new Vector2Int(0, Random.Range(0, height));
+                    dir = WallFlags.West;
+                    break;
+            }
+
+            if (usedPositions.Contains(pos)) continue;
+
+            usedPositions.Add(pos);
+            cells[pos.x, pos.y].walls &= ~dir;
+            exitPositions.Add(new ExitInfo { position = pos, direction = dir });
         }
     }
 }
