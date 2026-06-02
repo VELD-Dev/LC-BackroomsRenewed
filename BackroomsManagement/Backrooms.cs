@@ -346,8 +346,8 @@ public class Backrooms : NetworkBehaviour
                     }
                 }
 
-                const int LIGHT_GO_CHANCE_PERCENT = 30;
-                const int LIGHT_ON_CHANCE_PERCENT = 60;
+                const int LIGHT_GO_CHANCE_PERCENT = 60;
+                const int LIGHT_ON_CHANCE_PERCENT = 90;
                 var putLightFlag = Random.Range(0, 101) < LIGHT_GO_CHANCE_PERCENT;
                 if(putLightFlag)
                 {
