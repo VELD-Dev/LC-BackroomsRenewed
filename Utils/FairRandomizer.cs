@@ -36,13 +36,11 @@ public class FairRandomizer : NetworkBehaviour
             { SHIP_REV_TP, FairRandomizerEvent.ShipRevTP }
         });
 
-    // Network-synchronized parallel lists for luck values
     private NetworkList<byte> _luckKeys = null!;
     private NetworkList<float> _luckValues = null!;
 
     void Awake()
     {
-        // Initialize with server-write permission so only server/host can modify luck values
         _luckKeys = new NetworkList<byte>(
             readPerm: NetworkVariableReadPermission.Everyone,
             writePerm: NetworkVariableWritePermission.Server
@@ -118,7 +116,7 @@ public class FairRandomizer : NetworkBehaviour
     /// On success: resets luck to 0. On failure: increases luck by chance.
     /// </summary>
     /// <param name="eventType">The event type enum</param>
-    /// <param name="chance">Chance (percentage as 0-1 float, e.g., 0.1 for 10%)</param>
+    /// <param name="chance">Chance (percentage as 0-1 float, e.g. 0.1 for 10%)</param>
     /// <returns>True if the event triggers (player gets teleported)</returns>
     public bool CheckChance(FairRandomizerEvent eventType, float chance)
     {

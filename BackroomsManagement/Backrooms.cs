@@ -25,7 +25,7 @@ public class Backrooms : NetworkBehaviour
     [HideInInspector]
     public NetworkVariable<bool> IsGenerated = new(false);
 
-    [HideInInspector] public NetworkList<ulong> PlayersInBackrooms = new NetworkList<ulong>();
+    [HideInInspector] public NetworkList<ulong> PlayersInBackrooms;
 
     [HideInInspector] public CellBehaviour[,] Cells;
 
@@ -39,6 +39,8 @@ public class Backrooms : NetworkBehaviour
 
     void Awake()
     {
+        PlayersInBackrooms = new NetworkList<ulong>();
+        
         if(!Instance)
         {
             Instance = this;
@@ -98,20 +100,18 @@ public class Backrooms : NetworkBehaviour
     void FixedUpdate()
     {
         // Not denesting in case I'm adding more stuff
-        if(NetworkManager.Singleton.IsHost && IsServer && IsGenerated.Value)
+        if(IsServer && IsGenerated.Value)
         {
             if(_timeSinceLastTwinkleCheck < _nextTwinkleCheckTime)
             {
                 _timeSinceLastTwinkleCheck += Time.deltaTime;
                 return;
             }
-            else
-            {
-                TwinkleRandomLightsClientRpc();
-                _timeSinceLastTwinkleCheck = 0f;
-                _nextTwinkleCheckTime = Random.Range(3f, 15f);
-                Logger.LogInfo($"Twinkle check completed, next check in {_nextTwinkleCheckTime} seconds");
-            }
+
+            TwinkleRandomLightsClientRpc();
+            _timeSinceLastTwinkleCheck = 0f;
+            _nextTwinkleCheckTime = Random.Range(3f, 15f);
+            Logger.LogInfo($"Twinkle check completed, next check in {_nextTwinkleCheckTime} seconds");
         }
     }
 

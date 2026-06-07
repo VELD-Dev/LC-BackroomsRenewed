@@ -45,11 +45,6 @@ public class CellBehaviour : NetworkBehaviour {
             LightObject.SetActive(true);
             cellLightSource.enabled = true;
             cellLightSource.intensity = defaultLightState ? DefaultLightIntensity : 0f;
-
-            if (!defaultLightState)
-            {
-                CeilingMR.SetMaterials([lightOffMat, ceilingMat]);
-            }
         }
     }
     

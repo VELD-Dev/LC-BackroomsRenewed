@@ -77,6 +77,12 @@ public class Plugin : BaseUnityPlugin
         
         NetworkVariableSerializationTypes.InitializeSerializer_UnmanagedINetworkSerializable<Cell>();
         NetworkVariableSerializationTypes.InitializeEqualityChecker_UnmanagedIEquatable<Cell>();
+        NetworkVariableSerializationTypes.InitializeSerializer_UnmanagedByMemcpy<byte>();                                                    
+        NetworkVariableSerializationTypes.InitializeEqualityChecker_UnmanagedIEquatable<byte>();                                             
+        NetworkVariableSerializationTypes.InitializeSerializer_UnmanagedByMemcpy<float>();                                                   
+        NetworkVariableSerializationTypes.InitializeEqualityChecker_UnmanagedIEquatable<float>();                                            
+        NetworkVariableSerializationTypes.InitializeSerializer_UnmanagedByMemcpy<ulong>();                                                   
+        NetworkVariableSerializationTypes.InitializeEqualityChecker_UnmanagedIEquatable<ulong>(); 
     }
     
     private static void InitializeNetworkBehaviour(Type type)
