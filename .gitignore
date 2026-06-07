@@ -565,3 +565,4 @@ crashlytics-build.properties
 **/[Aa]sset[Rr]ipper/
 **/AssetBundles/
 **/Lethal Company/
+/dist/

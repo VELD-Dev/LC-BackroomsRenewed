@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
@@ -46,10 +46,40 @@
     <WriteLinesToFile File="$(NetcodePatcherDepsListFile)" Lines="@(ReferencePathWithRefAssemblies)" Overwrite="true"/>
     <Exec Command="netcode-patch -uv 2022.3.62 -nv 1.12.2 -tv 1.0.0 &quot;$(TargetPath)&quot; --dependency-file &quot;$(NetcodePatcherDepsListFile)&quot;" />
   </Target>
-  
-  <!--<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Copy SourceFiles="$(ProjectDir)/README.md;$(ProjectDir)/LICENSE" DestinationFolder="$(ProjectDir)/bin/$(Configuration)/" SkipUnchangedFiles="true" />
-    <Copy SourceFiles="$(ProjectDir)/Assets/*" DestinationFolder="($ProjectDir)/bin/$(Configuration)/" SkipUnchangedFiles="true" />
-  </Target>-->
+    
+  <Target Name="PackageRelease" AfterTargets="NetcodePatch">
+    <PropertyGroup>
+      <ModVersion>$([System.Text.RegularExpressions.Regex]::Match($([System.IO.File]::ReadAllText('$(ProjectDir)manifest.json')), '"version_number"\s*:\s*"([^"]+)"').Groups.get_Item(1).Value)</ModVersion>
+      <PluginFolderName>VELDDev-BackroomsRenewed</PluginFolderName>
+      <PackageStageDir>$(IntermediateOutputPath)package\</PackageStageDir>
+      <PackagePluginDir>$(PackageStageDir)BepInEx\plugins\$(PluginFolderName)\</PackagePluginDir>
+      <PackageOutputDir>$(ProjectDir)dist\</PackageOutputDir>
+      <PackageZipPath>$(PackageOutputDir)$(PluginFolderName)-$(ModVersion).zip</PackageZipPath>
+    </PropertyGroup>
+
+    <RemoveDir Directories="$(PackageStageDir)" />
+    <MakeDir Directories="$(PackagePluginDir);$(PackageOutputDir)" />
+
+    <ItemGroup>
+      <PackagePluginFiles Include="$(TargetPath)" />
+      <PackagePluginFiles Include="$(TargetDir)$(TargetName).pdb" Condition="'$(Configuration)' == 'Debug'" />
+      <PackagePluginFiles Include="$(ProjectDir)Assets\backroomsrenewed_assets" />
+      <PackagePluginFiles Include="$(ProjectDir)Assets\backroomsrenewed_toc" />
+      <PackageAssetFiles Include="$(ProjectDir)Assets\backroomsrenewed_achievements" />
+      <PackageRootFiles Include="$(ProjectDir)manifest.json" />
+      <PackageRootFiles Include="$(ProjectDir)icon.png" />
+      <PackageRootFiles Include="$(ProjectDir)README.md" />
+      <PackageRootFiles Include="$(ProjectDir)CHANGELOG.md" />
+    </ItemGroup>
+
+    <Copy SourceFiles="@(PackagePluginFiles)" DestinationFolder="$(PackagePluginDir)" />
+    <Copy SourceFiles="@(PackageAssetFiles)" DestinationFolder="$(PackagePluginDir)Assets\" />
+    <Copy SourceFiles="@(PackageRootFiles)" DestinationFolder="$(PackageStageDir)" />
+
+    <Delete Files="$(PackageZipPath)" />
+    <ZipDirectory SourceDirectory="$(PackageStageDir)" DestinationFile="$(PackageZipPath)" Overwrite="true" />
+
+    <Message Importance="high" Text="Packaged release -> $(PackageZipPath)" />
+  </Target>
 
 </Project>
