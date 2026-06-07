@@ -403,6 +403,7 @@ public class Backrooms : NetworkBehaviour
         // Final update in case the generation of
         // yield return BackroomsNavMesh.UpdateNavMesh(BackroomsNavMesh.navMeshData);
 
+        Logger.LogInfo("Finished backrooms generation");
         SetupBackroomsClientRpc(generator.width, generator.height);
     }
 
@@ -413,6 +414,7 @@ public class Backrooms : NetworkBehaviour
         var backroomsCenter = new Vector3((width * CELL_SIZE) / 2f, 10f, (length * CELL_SIZE) / 2f);
         BackroomsLightCover.transform.localPosition = backroomsCenter;
         BackroomsLightCover.transform.localScale = new Vector3(width, 1f, length) * 1.5f;
+        Logger.LogInfo("Set backrooms light cover");
         
         // Navmesh may be baked in the future by making one navmesh surface for each cell
         // and adding navmesh links between cells

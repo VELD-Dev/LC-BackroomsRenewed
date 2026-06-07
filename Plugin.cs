@@ -65,6 +65,7 @@ public class Plugin : BaseUnityPlugin
     {
         achievements = new AchievementAssets(mod, "backroomsrenewed_achievements");
         mod.RegisterContentHandlers();
+        mod.Content.assetBundles.Add(achievements.AssetBundleData);
     }
 
     private static void InitializeTypes()

@@ -1,11 +1,11 @@
 {
     "name": "Backrooms_Renewed",
     "description": "[v81] ENT#R TH# BACKR##MS - A new Backroom mod, completely reimagined. Enter an eerie world, oddly familiar but uncomfortable, in between slumber and consciousness, in the twilight of your mind.",
-    "version_number": "1.0.0",
+    "version_number": "0.1.0",
     "dependencies": [
-        "BepInEx-BepInExPack-5.4.2304",
+        "BepInEx-BepInExPack-5.4.2305",
         "AinaVT-LethalConfig-1.4.6",
-        "TeamXiaolan-DawnLib-0.9.2",
+        "TeamXiaolan-DawnLib-0.9.24",
         "Evaisa-FixPluginTypesSerialization-1.1.4"
     ],
     "website_url": "https://github.com/VELD-Dev/LC-BackroomsRenewed"

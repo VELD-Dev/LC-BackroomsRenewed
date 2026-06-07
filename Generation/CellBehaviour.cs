@@ -29,6 +29,7 @@ public class CellBehaviour : NetworkBehaviour {
         defaultLightState = lightState;
         UpdateWalls();
         
+        Plugin.Instance.logger.LogInfo($"Initializing cell ceiling has {CeilingMR.materials.Length} materials");
         lightOnMat = CeilingMR.materials[0]; 
         ceilingMat = CeilingMR.materials[1];
         lightOffMat = CeilingMR.materials[2];
@@ -36,8 +37,7 @@ public class CellBehaviour : NetworkBehaviour {
         {
             Plugin.Instance.logger.LogWarning($"Cell {cell.position} initialized with light source disabled.");
             LightObject.SetActive(false);
-            CeilingMR.materials[0] = ceilingMat;
-            CeilingMR.materials[1] = lightOnMat;
+            CeilingMR.SetMaterials([ceilingMat, ceilingMat]);
         }
         else
         {
@@ -48,8 +48,7 @@ public class CellBehaviour : NetworkBehaviour {
 
             if (!defaultLightState)
             {
-                CeilingMR.materials[0] = lightOffMat;
-                CeilingMR.materials[2] = lightOnMat;
+                CeilingMR.SetMaterials([lightOffMat, ceilingMat]);
             }
         }
     }

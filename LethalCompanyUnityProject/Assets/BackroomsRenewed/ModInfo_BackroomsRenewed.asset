@@ -15,10 +15,16 @@ MonoBehaviour:
   <AuthorName>k__BackingField: VELD-Dev
   <ModName>k__BackingField: Backrooms Renewed
   <Version>k__BackingField: 0.1.0
-  <READMEFile>k__BackingField: {fileID: 0}
-  <ChangelogFile>k__BackingField: {fileID: 0}
+  <READMEFile>k__BackingField: {fileID: 4900000, guid: 17eab98d1b066cc7787b52fda86056b6,
+    type: 3}
+  <ChangelogFile>k__BackingField: {fileID: 4900000, guid: c97cc7fe76ffae6a5af48ea8dc467faa,
+    type: 3}
   <ModDescription>k__BackingField: 
-  <ExtraDependencies>k__BackingField: []
+  <ExtraDependencies>k__BackingField:
+  - BepInEx-BepInExPack-5.4.2304
+  - AinaVT-LethalConfig-1.4.6
+  - TeamXiaolan-DawnLib-0.9.2
+  - Evaisa-FixPluginTypesSerialization-1.1.4
   <WebsiteUrl>k__BackingField: https://github.com/VELD-Dev/LC-BackroomsRenewed
   <ModIcon>k__BackingField: {fileID: 21300000, guid: beaf4e94800fb7c8a8b98fb8630154f7,
     type: 3}

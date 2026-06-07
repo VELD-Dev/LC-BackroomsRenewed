@@ -2,7 +2,7 @@
 A new Backrooms mod for Lethal Company. Revamped. Reworked. Renewed.
 
 ## 📜 Explanation
-This mod is **not an interior** mod, it does not add new interior and **scrap does not spawn in the Backrooms**.  
+This mod is **not an interior** mod, it does not add new interior and **scrap does not spawn in the Backrooms**. **It is not a moon either**.  
 What it does is different. It adds parallel place, **The Backrooms**, where you can be teleported when you're about to die, when you take damages (very small chance) or when you clip through a wall or through the floor but also in many other situations.  
   
 ## ✨ Features
@@ -34,10 +34,11 @@ Here is a non-exhaustive list of features. Some will remain hidden as they're me
 - `Max Fake Exits Count`: Sets how many fake exits shall spawn in the backrooms. Fake exits don't kill you, they teleport you somewhere else in the backrooms.
 
 ## Credits
-- Models and programming were made by myself
+- I made models and programming myself
 - Textures are either from the game itself or from **[AmbientCG](https://ambientcg.com/)**.
 - Thanks to **[JacuJ](https://new.thunderstore.io/c/lethal-company/p/JacuJ/)** for helping me with modelling, I was a total noob before this project
 - Thanks to **[TestAccount666](https://new.thunderstore.io/c/lethal-company/p/TestAccount666/)** for playtesting the mod !
 - Thanks to **[s1ckboy](https://new.thunderstore.io/c/lethal-company/p/s1ckboy/)** for playtesting the mod too !
 - Thanks to **Moroxide** for providing and editing ambience sounds for the Backrooms !
 - Thanks to **Heymeelie/Neekhaulas** for making the original Backrooms mod 🤩
+- Thanks to **[Kenji](https://thunderstore.io/c/lethal-company/p/rectorado/)** for helping me to solve light flickers
