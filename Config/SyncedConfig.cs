@@ -3,6 +3,7 @@ using Unity.Collections;
 
 namespace VELDDev.BackroomsRenewed.Config;
 
+[Serializable]
 public class SyncedConfig : Synchronizable<SyncedConfig>
 {
     public bool UseFairRandomizer;
@@ -29,21 +30,21 @@ public class SyncedConfig : Synchronizable<SyncedConfig>
         config = cfg;
         
         // TODO: Add security to prevent Non-hosts from modifying the Instance when Synced. (Local function?)
-        config.UseFairRandomizer.SettingChanged += (v, _) => UseFairRandomizer = (bool)v;
-        config.TeleportOnDeath.SettingChanged += (v, _) => TeleportOnDeath = (bool)v;
-        config.TeleportOnClipping.SettingChanged += (v, _) => TeleportOnClipping = (bool)v;
-        config.TeleportOnDamage.SettingChanged += (v, _) => TeleportOnDamage = (bool)v;
-        config.TeleportOnInteractDoor.SettingChanged += (v, _) => TeleportOnInteractDoor = (bool)v;
-        config.TeleportOnShipTeleport.SettingChanged += (v, _) => TeleportOnShipTP = (bool)v;
-        config.TeleportOnShipRevertTeleport.SettingChanged += (v, _) => TeleportOnShipRevTP = (bool)v;
-        config.TeleportationOddsOnDeath.SettingChanged += (v, _) => TeleportationOddsOnDeath = (float)v;
-        config.TeleportationOddsOnClipping.SettingChanged += (v, _) => TeleportationOddsOnClipping = (float)v;
-        config.TeleportationOddsOnDamage.SettingChanged += (v, _) => TeleportationOddsOnDamage = (float)v;
-        config.TeleportationOddsOnInteractDoor.SettingChanged += (v, _) => TeleportationOddsOnInteractDoor = (float)v;
-        config.TeleportationOddsOnShipTeleport.SettingChanged += (v, _) => TeleportationOddsOnShipTP = (float)v;
-        config.TeleportationOddsOnShipTeleport.SettingChanged += (v, _) => TeleportationOddsOnShipRevTP = (float)v;
-        config.DropHeldItemsOnTeleport.SettingChanged += (v, _) => DropHeldItemsOnTeleport = (bool)v;
-        config.LegacyNavMeshGeneration.SettingChanged += (v, _) => LegacyNavMeshGen = (bool)v;
+        config.UseFairRandomizer.SettingChanged += (v, _) => UseFairRandomizer = config.UseFairRandomizer.Value;
+        config.TeleportOnDeath.SettingChanged += (v, _) => TeleportOnDeath = config.TeleportOnDeath.Value;
+        config.TeleportOnClipping.SettingChanged += (v, _) => TeleportOnClipping = config.TeleportOnClipping.Value;
+        config.TeleportOnDamage.SettingChanged += (v, _) => TeleportOnDamage = config.TeleportOnDamage.Value;
+        config.TeleportOnInteractDoor.SettingChanged += (v, _) => TeleportOnInteractDoor = config.TeleportOnInteractDoor.Value;
+        config.TeleportOnShipTeleport.SettingChanged += (v, _) => TeleportOnShipTP = config.TeleportOnShipTeleport.Value;
+        config.TeleportOnShipRevertTeleport.SettingChanged += (v, _) => TeleportOnShipRevTP = config.TeleportOnShipRevertTeleport.Value;
+        config.TeleportationOddsOnDeath.SettingChanged += (v, _) => TeleportationOddsOnDeath = config.TeleportationOddsOnDeath.Value;
+        config.TeleportationOddsOnClipping.SettingChanged += (v, _) => TeleportationOddsOnClipping = config.TeleportationOddsOnClipping.Value;
+        config.TeleportationOddsOnDamage.SettingChanged += (v, _) => TeleportationOddsOnDamage = config.TeleportationOddsOnDamage.Value;
+        config.TeleportationOddsOnInteractDoor.SettingChanged += (v, _) => TeleportationOddsOnInteractDoor = config.TeleportationOddsOnInteractDoor.Value;
+        config.TeleportationOddsOnShipTeleport.SettingChanged += (v, _) => TeleportationOddsOnShipTP = config.TeleportationOddsOnShipTeleport.Value;
+        config.TeleportationOddsOnShipRevertTeleport.SettingChanged += (v, _) => TeleportationOddsOnShipRevTP = config.TeleportationOddsOnShipRevertTeleport.Value;
+        config.DropHeldItemsOnTeleport.SettingChanged += (v, _) => DropHeldItemsOnTeleport = config.DropHeldItemsOnTeleport.Value;
+        config.LegacyNavMeshGeneration.SettingChanged += (v, _) => LegacyNavMeshGen = config.LegacyNavMeshGeneration.Value;
 
         // Force synchronization when host changes settings.
         cfg.CfgFile.SettingChanged += (_, __) => BroadcastSync();
@@ -72,9 +73,11 @@ public class SyncedConfig : Synchronizable<SyncedConfig>
         Plugin.Instance.logger.LogDebug($"Host is broadcasting their config");
 
         byte[] data = Serialize(Instance);
+        if (data == null) return;
+
         var trueLength = data.Length;
         var fbwLength = FastBufferWriter.GetWriteSize(data) + IntSize;
-        
+
         using FastBufferWriter writer = new(fbwLength, Allocator.Temp);
         try
         {
@@ -106,6 +109,8 @@ public class SyncedConfig : Synchronizable<SyncedConfig>
         Plugin.Instance.logger.LogDebug($"Config request sync received from client {clientId}");
 
         byte[] data = Serialize(Instance);
+        if (data == null) return;
+
         var trueLength = data.Length;
         var fbwLength = FastBufferWriter.GetWriteSize(data)  + IntSize;
 
