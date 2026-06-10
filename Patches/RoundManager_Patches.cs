@@ -28,13 +28,13 @@ public static class RoundManager_Patches
             Backrooms.Instance = null;
         }
 
-        var dungenRoot = 50;
+        var dungenRootY = 50;
         if (__instance.dungeonGenerator != null && __instance.dungeonGenerator.Root != null)
         {
-            dungenRoot = __instance.dungeonGenerator.Root.transform.position.y;
+            dungenRootY = __instance.dungeonGenerator.Root.transform.position.y;
         }
 
-        var backroomsGo = GameObject.Instantiate(Plugin.Instance.BackroomsPrefab, new Vector3(5000, dungenRoot.y, 0), Quaternion.identity);
+        var backroomsGo = GameObject.Instantiate(Plugin.Instance.BackroomsPrefab, new Vector3(5000, dungenRootY, 0), Quaternion.identity);
         backroomsGo.GetComponent<NetworkObject>().Spawn(true);
         
     }
