@@ -189,7 +189,6 @@ public class Backrooms : NetworkBehaviour
         }
 
         targetPlayer.TeleportPlayer(position, true);
-        targetPlayer.movementForcesLastFrame = Vector3.zero;
         targetPlayer.ResetFallGravity();
         targetPlayer.isInsideFactory = true;
         StartPlayingAmbientAudios();

@@ -16,5 +16,5 @@ public static class PluginInfo
     public const string PluginName = "Backrooms Renewed";
     public const string GUID = "VELDDev.BackroomsRenewed";
     public const string Author = "VELD-Dev";
-    public const string Version = "0.1.3";
+    public const string Version = "0.1.4";
 }

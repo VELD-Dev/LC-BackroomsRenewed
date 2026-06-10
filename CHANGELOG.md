@@ -1,6 +1,12 @@
 # Changelog
 Here are listed all the changes made in each update.
 
+# [0.1.4](https://github.com/VELD-Dev/LC-BackroomsRenewed/releases/tag/v0.1.4) - 2026-06-10
+- Fixed a bug preventing from teleporting into the backrooms
+- Removed momentum cancellation as it was causing issues with teleportation
+- Fixed backrooms generation (PR [#1](https://github.com/VELD-Dev/LC-BackroomsRenewed/pull/1) by Entity378)
+- Fixed configs mismatch (PR [#1](https://github.com/VELD-Dev/LC-BackroomsRenewed/pull/1) byt Entity378)
+s
 # [0.1.3](https://github.com/VELD-Dev/LC-BackroomsRenewed/releases/tag/v0.1.3) - 2026-06-09
 - Fixed a bug causing backrooms to occasionally generate inside of a map's terrain.
 - Removed any momentum the player could have had when teleporting to the backrooms.
