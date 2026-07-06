@@ -60,7 +60,12 @@ public class WilsonAlgorithm : IMazeAlgorithm
 
             if (visited.ContainsKey(current))
             {
-                pathLength = visited[current] + 1;
+                int loopStart = visited[current];
+                for (int i = loopStart + 1; i < pathLength; i++)
+                {
+                    visited.Remove(path[i]);
+                }
+                pathLength = loopStart + 1;
             }
             else
             {
